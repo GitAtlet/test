@@ -1,28 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kapitel I: Der Kampf beginnt — The Awakening (1919–1923)</title>
+    <title>1918–1928: The Symphony of Ruin</title>
 
-    <!-- Google Fonts: Fraktur (UnifrakturMaguntia) + Montserrat for sans-serif elements -->
+    <!-- Google Fonts: Cinzel for quotes, Inter for UI -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Montserrat:wght@300;400;600;700;800&family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-deep: #0a0a0a;
-            --sepia-bg: #1a1410;
-            --text-white: #e8e0d8;
-            --text-red: #8b0000;
-            --text-red-glow: #a52020;
-            --vignette-strength: 65%;
-            --film-grain-opacity: 0.18;
-            --gold-accent: #b8935a;
+            --black: #000000;
+            --white: #ffffff;
+            --crimson: #cc0000;
+            --dark-red-1: #3b0000;
+            --dark-red-2: #6b0000;
+            --dark-red-3: #8a0000;
+            --dark-grey: #1a1a1a;
+            --mid-grey: #2a2a2a;
+            --font-quote: 'Cinzel', 'Times New Roman', serif;
+            --font-ui: 'Inter', 'Helvetica Neue', sans-serif;
+            --transition-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+            --transition-sharp: cubic-bezier(0.6, 0.0, 0.4, 1);
         }
 
-        * {
+        *,
+        *::before,
+        *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -32,1605 +38,1779 @@
         body {
             width: 100%;
             height: 100%;
-            background: #000;
             overflow: hidden;
-            font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+            background: var(--black);
+            font-family: var(--font-ui);
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
             cursor: none;
         }
 
-        /* ── MAIN STAGE ── */
-        #stage-wrapper {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-
-        #stage {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 177.78vh;
-            /* 16:9 constraint */
-            max-height: 56.25vw;
-            /* 16:9 constraint */
-            aspect-ratio: 16 / 9;
-            overflow: hidden;
-            background: #000;
-            transform-origin: center center;
-            box-shadow: 0 0 120px rgba(0, 0, 0, 0.9);
-        }
-
-        /* ── LAYERS ── */
-        #bg-layer {
-            position: absolute;
+        /* ── MAIN SYMPHONY CONTAINER ── */
+        .symphony-container {
+            position: fixed;
             inset: 0;
+            background: #000;
             z-index: 1;
-            background: #000;
-            transition: background 0.8s ease;
         }
-        #bg-layer img {
+
+        /* ── VIDEO LAYERS ── */
+        .video-layer {
             position: absolute;
             inset: 0;
+            opacity: 0;
+            transition: opacity 1.2s var(--transition-smooth);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .video-layer.active {
+            opacity: 1;
+            transition: opacity 0.8s var(--transition-smooth);
+        }
+        .video-layer.fading {
+            opacity: 0;
+            transition: opacity 1.4s var(--transition-smooth);
+        }
+        .video-layer video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.8s ease;
-            filter: grayscale(0.85) sepia(0.55) contrast(1.3) brightness(0.75);
-        }
-        #bg-layer img.active {
-            opacity: 1;
-        }
-        #bg-layer img.split-left {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.2s ease;
-            filter: grayscale(0.9) sepia(0.4) contrast(1.4) brightness(0.7);
-        }
-        #bg-layer img.split-right {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 1.2s ease;
-            filter: saturate(1.6) contrast(1.2) brightness(0.75);
-        }
-        #bg-layer img.split-left.active,
-        #bg-layer img.split-right.active {
-            opacity: 1;
+            filter: grayscale(0.3) contrast(1.25) brightness(0.75);
+            mix-blend-mode: normal;
         }
 
-        /* Film grain overlay */
-        #grain-overlay {
+        /* ── MOVEMENT 4 SPLIT SCREEN ── */
+        .split-screen-overlay {
             position: absolute;
             inset: 0;
             z-index: 3;
-            pointer-events: none;
-            opacity: var(--film-grain-opacity);
-            mix-blend-mode: overlay;
-            background-image: url('assets/images/film-grain-overlay.png');
-            background-repeat: repeat;
-            background-size: 180px 180px;
-            animation: grain-shift 0.25s steps(3) infinite;
-        }
-        /* Fallback grain via SVG filter when PNG not loaded */
-        #grain-fallback {
-            position: absolute;
-            inset: 0;
-            z-index: 3;
-            pointer-events: none;
-            opacity: 0.14;
-            mix-blend-mode: overlay;
             display: none;
-        }
-        #grain-overlay.failed+#grain-fallback {
-            display: block;
-        }
-
-        @keyframes grain-shift {
-            0% {
-                background-position: 0 0;
-            }
-            33% {
-                background-position: -3px 2px;
-            }
-            66% {
-                background-position: 2px -3px;
-            }
-            100% {
-                background-position: -1px -1px;
-            }
-        }
-
-        /* Vignette */
-        #vignette {
-            position: absolute;
-            inset: 0;
-            z-index: 4;
             pointer-events: none;
-            background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.75) 85%, #000 98%);
-            transition: background 2s ease;
         }
-        #vignette.burning {
-            background: radial-gradient(ellipse at center, transparent 5%, rgba(0, 0, 0, 0.9) 40%, #000 70%);
-            animation: iris-close 3s ease-in forwards;
-        }
-
-        @keyframes iris-close {
-            0% {
-                background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.75) 85%, #000 98%);
-            }
-            100% {
-                background: radial-gradient(ellipse at center, transparent 0%, #000 15%, #000 100%);
-            }
-        }
-
-        /* Text overlay layer */
-        #text-layer {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-            pointer-events: none;
+        .split-screen-overlay.active {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
         }
-
-        /* ── TEXT ELEMENTS ── */
-        .overlay-text {
-            position: absolute;
-            color: var(--text-white);
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            pointer-events: none;
-            text-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.6);
-            letter-spacing: 0.04em;
-        }
-        .overlay-text.visible {
-            opacity: 1;
-        }
-        .overlay-text.fraktur {
-            font-family: 'UnifrakturMaguntia', 'Cinzel', 'Times New Roman', serif;
-            letter-spacing: 0.08em;
-        }
-        .overlay-text.sans {
-            font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-            letter-spacing: 0.12em;
-            font-weight: 600;
-        }
-        .overlay-text.subtitle {
-            font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
-            font-weight: 300;
-            letter-spacing: 0.06em;
-            font-style: italic;
-            color: #c8bfb0;
-        }
-        .overlay-text.red-pulse {
-            animation: redPulse 3s ease-in-out forwards;
-        }
-        .overlay-text.ember-burn {
-            animation: emberBurn 2.5s ease-out forwards;
-        }
-        .overlay-text.bottom-left {
-            position: absolute;
-            bottom: 6%;
-            left: 5%;
-            text-align: left;
-            font-size: clamp(0.6rem, 1.1vw, 0.9rem);
-            color: #b8a890;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-        }
-        .overlay-text.top-title {
-            position: absolute;
-            top: 6%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'UnifrakturMaguntia', 'Cinzel', serif;
-            font-size: clamp(1.2rem, 2.2vw, 1.8rem);
-            letter-spacing: 0.1em;
-            color: #d4c5a9;
-        }
-        .overlay-text.allcaps-spaced {
-            letter-spacing: 0.2em;
-            font-weight: 700;
-        }
-
-        /* Typewriter cursor */
-        .typewriter-cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1em;
-            background: #e8e0d8;
-            animation: blink 0.7s step-end infinite;
-            vertical-align: text-bottom;
-            margin-left: 2px;
-        }
-        @keyframes blink {
-            50% {
-                opacity: 0;
-            }
-        }
-
-        /* Red pulse keyframes */
-        @keyframes redPulse {
-            0% {
-                color: #e8e0d8;
-                text-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-            }
-            30% {
-                color: #8b0000;
-                text-shadow: 0 0 30px rgba(139, 0, 0, 0.7), 0 0 60px rgba(180, 20, 20, 0.4);
-            }
-            70% {
-                color: #a52020;
-                text-shadow: 0 0 20px rgba(160, 30, 30, 0.5);
-            }
-            100% {
-                color: #e8e0d8;
-                text-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-            }
-        }
-        @keyframes emberBurn {
-            0% {
-                color: #ff4400;
-                text-shadow: 0 0 50px rgba(255, 60, 0, 0.9), 0 0 100px rgba(200, 30, 0, 0.6);
-                transform: scale(1.08);
-            }
-            40% {
-                color: #ff2200;
-                text-shadow: 0 0 80px rgba(255, 30, 0, 1), 0 0 140px rgba(180, 20, 0, 0.7);
-                transform: scale(1.05);
-            }
-            100% {
-                color: #e8e0d8;
-                text-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-                transform: scale(1);
-            }
-        }
-
-        /* Breathing zoom on images */
-        .breathing-zoom {
-            animation: breathe 6s ease-in-out infinite;
-        }
-        @keyframes breathe {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.025);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Scrolling document */
-        #doc-scroll-container {
-            position: absolute;
-            inset: 8% 10%;
-            z-index: 5;
-            pointer-events: none;
-            overflow: hidden;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-        #doc-scroll-container.visible {
-            opacity: 1;
-        }
-        #doc-scroll-inner {
-            position: relative;
-            width: 100%;
-            font-family: 'UnifrakturMaguntia', 'Cinzel', 'Times New Roman', serif;
-            color: #3a2a18;
-            font-size: clamp(0.7rem, 1.3vw, 1rem);
-            line-height: 1.8;
-            padding: 4%;
-            background: linear-gradient(180deg, #f4e8d1 0%, #e8d8b8 30%, #f0e0c8 60%, #e6d4b0 100%);
-            border-radius: 2px;
-            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.5);
-            letter-spacing: 0.03em;
-            animation: docScrollUp 18s linear forwards;
-        }
-        @keyframes docScrollUp {
-            0% {
-                transform: translateY(30%);
-            }
-            100% {
-                transform: translateY(-55%);
-            }
-        }
-        .doc-highlight {
-            color: #8b0000;
-            font-weight: bold;
-        }
-
-        /* Split screen divider */
-        #split-divider {
-            position: absolute;
-            left: 50%;
-            top: 0;
+        .split-left {
+            width: 60%;
             height: 100%;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.15);
-            z-index: 5;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.6s ease;
+            position: relative;
+            overflow: hidden;
         }
-        #split-divider.visible {
+        .split-left video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.25) contrast(1.15) brightness(0.7);
+        }
+        .split-right {
+            width: 40%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .election-bars {
+            width: 100%;
+            max-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: flex-start;
+        }
+        .election-bar-group {
+            width: 100%;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.7s var(--transition-smooth);
+        }
+        .election-bar-group.visible {
             opacity: 1;
+            transform: translateX(0);
         }
-
-        /* Swastika end symbol */
-        #end-swastika {
-            position: absolute;
-            z-index: 6;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(30px, 4vw, 60px);
-            height: clamp(30px, 4vw, 60px);
+        .election-bar-label {
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.55);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            font-weight: 500;
         }
-        #end-swastika.visible {
+        .election-bar-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .election-bar-fill {
+            height: 100%;
+            background: var(--crimson);
+            border-radius: 2px;
+            transition: width 1.8s var(--transition-sharp);
+            width: 0;
+        }
+        .election-bar-fill.fill-1924may {
+            width: 6.5%;
             opacity: 0.7;
         }
-        #end-swastika svg {
+        .election-bar-fill.fill-1924dec {
+            width: 3%;
+            opacity: 0.5;
+        }
+        .election-bar-fill.fill-1928 {
+            width: 2.6%;
+            opacity: 0.35;
+        }
+        .election-bar-percent {
+            font-family: var(--font-ui);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 0.25rem;
+            font-weight: 400;
+        }
+
+        /* ── IMAGE OVERLAYS ── */
+        .image-overlay {
+            position: absolute;
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1.5s var(--transition-smooth);
+            mix-blend-mode: multiply;
+        }
+        .image-overlay.visible {
+            opacity: 0.6;
+        }
+        .image-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: grayscale(0.2) contrast(1.2);
+        }
+        /* Movement 1 overlays */
+        .overlay-iron-cross {
+            top: 15%;
+            right: 10%;
+            width: 18vw;
+            max-width: 180px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+        .overlay-starving-child {
+            bottom: 12%;
+            left: 8%;
+            width: 22vw;
+            max-width: 220px;
+            height: auto;
+            aspect-ratio: 3/4;
+        }
+        /* Movement 3 overlay */
+        .overlay-putsch-medal {
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14vw;
+            max-width: 140px;
+            height: auto;
+            aspect-ratio: 1/1;
+        }
+        /* Movement 4 poster */
+        .overlay-election-poster {
+            bottom: 10%;
+            left: 5%;
+            width: 25vw;
+            max-width: 250px;
+            height: auto;
+            aspect-ratio: 2/3;
+        }
+
+        /* ── QUOTE OVERLAYS ── */
+        .quote-overlay {
+            position: absolute;
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s var(--transition-smooth);
+            font-family: var(--font-quote);
+            color: var(--white);
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(0, 0, 0, 0.7), 0 2px 8px rgba(0, 0, 0, 0.8);
+            line-height: 1.5;
+        }
+        .quote-overlay.visible {
+            opacity: 0.85;
+        }
+        .quote-german {
+            display: block;
+            font-weight: 600;
+            font-size: clamp(1rem, 2.2vw, 1.6rem);
+            margin-bottom: 0.4rem;
+        }
+        .quote-english {
+            display: block;
+            font-weight: 400;
+            font-size: clamp(0.7rem, 1.5vw, 1.05rem);
+            opacity: 0.7;
+            font-style: italic;
+            letter-spacing: 0.04em;
+        }
+        .quote-attribution {
+            display: block;
+            font-family: var(--font-ui);
+            font-size: clamp(0.55rem, 1vw, 0.7rem);
+            opacity: 0.5;
+            letter-spacing: 0.08em;
+            margin-top: 0.5rem;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        /* Quote positions per movement */
+        .quote-m1 {
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 80%;
+            max-width: 700px;
+        }
+        .quote-m2 {
+            top: 25%;
+            left: 8%;
+            text-align: left;
+            width: 70%;
+            max-width: 600px;
+            border-left: 2px solid var(--crimson);
+            padding-left: 1.5rem;
+        }
+        .quote-m3 {
+            top: 10%;
+            right: 6%;
+            text-align: right;
+            width: 65%;
+            max-width: 550px;
+        }
+        .quote-m4 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 75%;
+            max-width: 650px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 1.5rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ── SWASTIKA FRAGMENT CONTAINERS ── */
+        .swastika-fragment {
+            position: absolute;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s var(--transition-sharp);
+        }
+        .swastika-fragment.flickering {
+            animation: flickerBase 0.08s var(--transition-sharp);
+        }
+        .swastika-fragment svg {
             width: 100%;
             height: 100%;
         }
 
-        /* ── UI ELEMENTS ── */
-        #mute-btn {
-            position: absolute;
-            top: 3%;
-            right: 3%;
-            z-index: 10;
-            background: rgba(20, 15, 10, 0.7);
-            border: 1px solid rgba(180, 150, 120, 0.5);
-            color: #c8bfb0;
-            padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 16px);
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(0.55rem, 0.9vw, 0.75rem);
-            letter-spacing: 0.1em;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            pointer-events: all;
-        }
-        #mute-btn:hover {
-            background: rgba(40, 25, 15, 0.85);
-            border-color: rgba(200, 160, 120, 0.7);
-            color: #e8e0d8;
-        }
-        #mute-btn.muted {
-            color: #8b0000;
-            border-color: rgba(139, 0, 0, 0.5);
-        }
-
-        /* Enter button for end */
-        #enter-btn {
-            position: absolute;
-            z-index: 10;
-            pointer-events: all;
+        /* Fragment 1: Top-right peek, dark red */
+        .fragment-1 {
+            top: -8%;
+            right: -5%;
+            width: 35vw;
+            max-width: 400px;
+            height: 35vw;
+            max-height: 400px;
             opacity: 0;
-            transition: opacity 1.5s ease;
-            left: 50%;
-            top: 68%;
-            transform: translate(-50%, -50%);
-            background: transparent;
-            border: 2px solid rgba(180, 150, 120, 0.6);
-            color: #c8bfb0;
-            padding: clamp(10px, 1.8vw, 18px) clamp(24px, 3vw, 40px);
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(0.7rem, 1.1vw, 0.9rem);
-            letter-spacing: 0.25em;
-            border-radius: 2px;
-            transition: all 0.5s ease;
-            text-transform: uppercase;
         }
-        #enter-btn.visible {
-            opacity: 1;
-            pointer-events: all;
-            cursor: pointer;
-        }
-        #enter-btn:hover {
-            border-color: #e8e0d8;
-            color: #fff;
-            box-shadow: 0 0 40px rgba(180, 140, 100, 0.3);
-            letter-spacing: 0.3em;
+        .fragment-1 svg path {
+            fill: var(--dark-red-1);
         }
 
-        /* Loading indicator */
-        #loading-indicator {
+        /* Fragment 2: Top-right larger, mid red */
+        .fragment-2 {
+            top: -10%;
+            right: -8%;
+            width: 45vw;
+            max-width: 520px;
+            height: 45vw;
+            max-height: 520px;
+            opacity: 0;
+        }
+        .fragment-2 svg path {
+            fill: var(--dark-red-2);
+        }
+
+        /* Fragment 3: Bottom-left, brighter red */
+        .fragment-3 {
+            bottom: -12%;
+            left: -10%;
+            width: 38vw;
+            max-width: 440px;
+            height: 38vw;
+            max-height: 440px;
+            opacity: 0;
+        }
+        .fragment-3 svg path {
+            fill: var(--dark-red-3);
+        }
+
+        /* Fragment 4: Top-left, dark grey, ghost-like */
+        .fragment-4 {
+            top: -15%;
+            left: -12%;
+            width: 55vw;
+            max-width: 640px;
+            height: 55vw;
+            max-height: 640px;
+            opacity: 0;
+        }
+        .fragment-4 svg path {
+            fill: var(--dark-grey);
+        }
+
+        @keyframes flickerBase {
+            0%,
+            100% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 0.15;
+            }
+            70% {
+                opacity: 0.04;
+            }
+            90% {
+                opacity: 0.08;
+            }
+        }
+
+        /* ── FILM GRAIN CANVAS ── */
+        #film-grain-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 8;
+            pointer-events: none;
+            opacity: 0.35;
+            mix-blend-mode: overlay;
+        }
+
+        /* ── VIGNETTE ── */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 7;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center,
+                    transparent 55%,
+                    rgba(0, 0, 0, 0.35) 72%,
+                    rgba(0, 0, 0, 0.75) 88%,
+                    rgba(0, 0, 0, 0.95) 100%);
+        }
+
+        /* ── ENTER SYMPHONY BUTTON ── */
+        .enter-symphony-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            transition: opacity 0.8s var(--transition-smooth);
+            cursor: pointer;
+        }
+        .enter-symphony-wrapper.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .enter-symphony-btn {
+            font-family: var(--font-quote);
+            font-size: clamp(1.2rem, 2.8vw, 2rem);
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.85);
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1.2rem 3rem;
+            cursor: pointer;
+            transition: all 0.6s var(--transition-smooth);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+        .enter-symphony-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 60px rgba(204, 0, 0, 0.2), inset 0 0 30px rgba(204, 0, 0, 0.08);
+            letter-spacing: 0.28em;
+        }
+        .enter-symphony-btn::before {
+            content: '';
             position: absolute;
-            bottom: 5%;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.04),
+                    transparent);
+            transition: left 0.8s var(--transition-smooth);
+        }
+        .enter-symphony-btn:hover::before {
+            left: 100%;
+        }
+        .enter-symphony-subtitle {
+            position: absolute;
+            bottom: 22%;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 8;
-            color: rgba(200, 180, 160, 0.5);
-            font-family: 'Montserrat', sans-serif;
+            font-family: var(--font-ui);
             font-size: 0.65rem;
-            letter-spacing: 0.2em;
+            letter-spacing: 0.25em;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            transition: opacity 0.6s;
+        }
+
+        /* ── PAUSE INDICATOR ── */
+        .pause-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 15;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s;
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.8rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+        .pause-indicator.visible {
+            opacity: 1;
+        }
+
+        /* ── END STATE ── */
+        .end-state {
+            position: fixed;
+            inset: 0;
+            z-index: 18;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s var(--transition-smooth);
+        }
+        .end-state.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .end-swastika-ghost {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30vw;
+            max-width: 350px;
+            height: 30vw;
+            max-height: 350px;
+            opacity: 0.02;
+            transition: opacity 3s var(--transition-smooth);
+            z-index: 1;
+        }
+        .end-swastika-ghost svg path {
+            fill: #ffffff;
+        }
+        .end-text-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1.5s var(--transition-smooth) 1s;
+        }
+        .end-state.visible .end-text-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .end-main-text {
+            font-family: var(--font-quote);
+            font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .end-quote-text {
+            font-family: var(--font-quote);
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 0.06em;
+            margin-bottom: 0.6rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+        .end-attribution {
+            font-family: var(--font-ui);
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+        }
+        .end-enter-hint {
+            position: relative;
+            z-index: 2;
+            font-family: var(--font-ui);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 3rem;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity 1.5s 2.5s;
+            animation: hintPulse 3s ease-in-out infinite;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .end-state.visible .end-enter-hint {
+            opacity: 0.7;
+        }
+        @keyframes hintPulse {
+            0%,
+            100% {
+                opacity: 0.35;
+            }
+            50% {
+                opacity: 0.7;
+            }
         }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
-            #stage {
-                max-width: 100vw;
-                max-height: 56.25vw;
+            .split-screen-overlay.active {
+                flex-direction: column;
             }
-            .overlay-text {
-                font-size: 80% !important;
+            .split-left {
+                width: 100%;
+                height: 55%;
             }
-            #mute-btn {
-                top: 2%;
-                right: 2%;
-                padding: 5px 10px;
-                font-size: 0.6rem;
+            .split-right {
+                width: 100%;
+                height: 45%;
+                border-left: none;
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 1.5rem;
             }
-            #enter-btn {
-                padding: 8px 18px;
-                font-size: 0.65rem;
+            .election-bars {
+                gap: 1.5rem;
+            }
+            .quote-m2 {
+                border-left-width: 1.5px;
+                padding-left: 1rem;
+            }
+            .quote-m4 {
+                padding: 1rem 1.25rem;
+            }
+            .overlay-iron-cross {
+                width: 25vw;
+                max-width: 120px;
+            }
+            .overlay-starving-child {
+                width: 30vw;
+                max-width: 160px;
+            }
+            .fragment-1,
+            .fragment-2,
+            .fragment-3,
+            .fragment-4 {
+                max-width: 280px;
+                max-height: 280px;
+            }
+            .enter-symphony-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                letter-spacing: 0.15em;
             }
         }
         @media (max-width: 480px) {
-            #stage {
-                max-width: 100vw;
-                max-height: 56.25vw;
+            .quote-german {
+                font-size: 0.9rem;
             }
-            .overlay-text {
-                font-size: 65% !important;
+            .quote-english {
+                font-size: 0.65rem;
             }
-            #doc-scroll-container {
-                inset: 5% 6%;
+            .quote-attribution {
+                font-size: 0.5rem;
             }
-            #doc-scroll-inner {
+            .split-left {
+                height: 50%;
+            }
+            .split-right {
+                height: 50%;
+                padding: 1rem;
+            }
+            .election-bars {
+                gap: 1rem;
+                max-width: 200px;
+            }
+            .election-bar-label {
                 font-size: 0.6rem;
-                line-height: 1.5;
             }
-        }
-
-        /* Fullscreen cursor visibility */
-        #stage-wrapper.interactive {
-            cursor: default;
+            .end-main-text {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- ── STAGE WRAPPER ── -->
-    <div id="stage-wrapper">
-        <div id="stage">
+    <!-- ═══════════════ MAIN SYMPHONY CONTAINER ═══════════════ -->
+    <div class="symphony-container" id="symphonyContainer">
 
-            <!-- Background image layer -->
-            <div id="bg-layer">
-                <img id="img-munich" src="assets/images/munich-1919.jpg" alt="Munich 1919"
-                loading="lazy" class="breathing-zoom"
-                onerror="this.style.display='none';document.getElementById('bg-layer').style.background='linear-gradient(180deg, #1a1410 0%, #0d0a07 40%, #1a120c 100%)';">
-                <img id="img-sterneckerbrau" src="assets/images/sterneckerbrau-1919.jpg" alt="Sterneckerbräu"
-                loading="lazy"
-                onerror="this.style.display='none';">
-                <img id="img-dap-meeting" src="assets/images/dap-meeting-interior.jpg" alt="DAP Meeting"
-                loading="lazy"
-                onerror="this.style.display='none';">
-                <img id="img-hitler-profile" src="assets/images/hitler-profile-1919.jpg" alt="Hitler 1919"
-                loading="lazy"
-                onerror="this.style.display='none';">
-                <img id="img-party-program" src="assets/images/party-program-1920.jpg" alt="25-Point Program"
-                loading="lazy"
-                onerror="this.style.display='none';">
-                <img id="img-early-rally" src="assets/images/early-rally-1921.jpg" alt="Early Rally"
-                loading="lazy"
-                onerror="this.style.display='none';">
-                <!-- Split screen images for Section 10 -->
-                <img id="img-putsch-left" src="assets/images/beer-hall-putsch-1923.jpg" alt="Putsch Marchers"
-                class="split-left" loading="lazy"
-                onerror="this.style.display='none';">
-                <img id="img-blood-flag" src="assets/images/blood-flag.jpg" alt="Blutflagge"
-                class="split-right" loading="lazy"
-                onerror="this.style.display='none';">
+        <!-- ── Video Layer: Movement 1 ── -->
+        <div class="video-layer" id="videoLayer1" data-movement="1">
+            <video id="video1" loop muted playsinline preload="auto"
+            src="assets/videos/movement1-wound.mp4"
+            poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Crect fill='%23000000' width='1920' height='1080'/%3E%3C/svg%3E">
+        </video>
+    </div>
+
+    <!-- ── Video Layer: Movement 2 ── -->
+    <div class="video-layer" id="videoLayer2" data-movement="2">
+        <video id="video2" loop muted playsinline preload="auto"
+        src="assets/videos/movement2-birth.mp4"
+        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Crect fill='%23000000' width='1920' height='1080'/%3E%3C/svg%3E">
+    </video>
+</div>
+
+<!-- ── Video Layer: Movement 3 ── -->
+<div class="video-layer" id="videoLayer3" data-movement="3">
+    <video id="video3" loop muted playsinline preload="auto"
+    src="assets/videos/movement3-putsch.mp4"
+    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Crect fill='%23000000' width='1920' height='1080'/%3E%3C/svg%3E">
+</video>
+</div>
+
+<!-- ── Video Layer: Movement 4 ── -->
+<div class="video-layer" id="videoLayer4" data-movement="4">
+    <video id="video4" loop muted playsinline preload="auto"
+    src="assets/videos/movement4-lean-years.mp4"
+    poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Crect fill='%23000000' width='1920' height='1080'/%3E%3C/svg%3E">
+</video>
+</div>
+
+<!-- ── Split Screen Overlay (Movement 4) ── -->
+<div class="split-screen-overlay" id="splitScreenOverlay">
+    <div class="split-left">
+        <video id="video4split" loop muted playsinline preload="auto"
+        src="assets/videos/movement4-lean-years.mp4">
+    </video>
+</div>
+<div class="split-right">
+    <div class="election-bars">
+        <div class="election-bar-group" id="barGroup1">
+            <span class="election-bar-label">Mai 1924 · Reichstagswahl</span>
+            <div class="election-bar-track">
+                <div class="election-bar-fill fill-1924may" id="barFill1"></div>
             </div>
-
-            <!-- Film grain overlay (PNG) -->
-            <div id="grain-overlay" onerror="this.classList.add('failed');"></div>
-            <!-- Fallback: SVG noise filter -->
-            <div id="grain-fallback">
-                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"
-                style="position:absolute;inset:0;width:100%;height:100%;">
-                <defs>
-                    <filter id="noise-filter" x="0" y="0" width="100%" height="100%">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"
-                        result="noise" />
-                        <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise" />
-                        <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay" />
-                    </filter>
-                </defs>
-                <rect width="100%" height="100%" filter="url(#noise-filter)" opacity="0.5" />
-            </svg>
+            <span class="election-bar-percent">6,5% — NSDAP</span>
         </div>
-
-        <!-- Vignette -->
-        <div id="vignette"></div>
-
-        <!-- Split divider -->
-        <div id="split-divider"></div>
-
-        <!-- Text overlay layer -->
-        <div id="text-layer">
-            <!-- Section 2: Quote -->
-            <div id="text-quote-main" class="overlay-text fraktur"
-            style="font-size:clamp(1.4rem,2.8vw,2.4rem);top:38%;left:50%;transform:translate(-50%,-50%);width:85%;">
-            <span id="typewriter-target-1"></span><span class="typewriter-cursor" id="cursor-1"></span>
+        <div class="election-bar-group" id="barGroup2">
+            <span class="election-bar-label">Dezember 1924 · Reichstagswahl</span>
+            <div class="election-bar-track">
+                <div class="election-bar-fill fill-1924dec" id="barFill2"></div>
+            </div>
+            <span class="election-bar-percent">3,0% — NSDAP</span>
         </div>
-        <div id="text-quote-sub" class="overlay-text subtitle"
-        style="font-size:clamp(0.7rem,1.2vw,1rem);top:52%;left:50%;transform:translate(-50%,-50%);">
-    </div>
-
-    <!-- Section 4: Location label -->
-    <div id="text-location" class="overlay-text bottom-left"></div>
-
-    <!-- Section 5: Quote overlay -->
-    <div id="text-quote2-main" class="overlay-text fraktur red-pulse"
-    style="font-size:clamp(1.3rem,2.4vw,2rem);top:42%;left:50%;transform:translate(-50%,-50%);width:80%;">
-</div>
-<div id="text-quote2-sub" class="overlay-text subtitle"
-style="font-size:clamp(0.65rem,1vw,0.85rem);top:54%;left:50%;transform:translate(-50%,-50%);">
-</div>
-
-<!-- Section 6: Typed text -->
-<div id="text-dap-info" class="overlay-text sans"
-style="font-size:clamp(0.65rem,1vw,0.85rem);bottom:10%;left:50%;transform:translateX(-50%);width:85%;text-align:center;line-height:1.6;">
-<span id="typewriter-target-2"></span><span class="typewriter-cursor" id="cursor-2"></span>
-</div>
-
-<!-- Section 7: Hitler reveal -->
-<div id="text-hitler-intro" class="overlay-text fraktur"
-style="font-size:clamp(1rem,1.8vw,1.5rem);top:30%;left:50%;transform:translate(-50%,-50%);"></div>
-<div id="text-hitler-name" class="overlay-text fraktur ember-burn"
-style="font-size:clamp(2rem,4vw,3.5rem);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-
-<!-- Section 8: Document scroll -->
-<div id="doc-scroll-container">
-    <div id="doc-scroll-inner">
-        <p style="text-align:center;font-size:1.3em;margin-bottom:1em;">DAS PROGRAMM DER NSDAP<br><small>1920</small></p>
-        <p><span class="doc-highlight">1.</span> Wir fordern den Zusammenschluß aller Deutschen auf Grund des
-            Selbstbestimmungsrechtes der Völker zu einem <span class="doc-highlight">Großdeutschland</span>.</p>
-            <p><span class="doc-highlight">4.</span> Staatsbürger kann nur sein, wer <span class="doc-highlight">Volksgenosse</span> ist. Volksgenosse kann nur sein, wer deutschen Blutes ist, ohne Rücksicht auf Konfession. <span class="doc-highlight">Kein Jude</span> kann daher Volksgenosse sein.</p>
-            <p><span class="doc-highlight">11.</span> Abschaffung des arbeits- und mühelosen Einkommens. <span class="doc-highlight">Brechung der Zinsknechtschaft.</span></p>
-            <p><span class="doc-highlight">25.</span> Zur Durchführung alles dessen fordern wir die Schaffung einer starken <span class="doc-highlight">Zentralgewalt</span> des Reiches.</p>
+        <div class="election-bar-group" id="barGroup3">
+            <span class="election-bar-label">Mai 1928 · Reichstagswahl</span>
+            <div class="election-bar-track">
+                <div class="election-bar-fill fill-1928" id="barFill3"></div>
+            </div>
+            <span class="election-bar-percent">2,6% — NSDAP</span>
         </div>
     </div>
-
-    <!-- Section 8 title -->
-    <div id="text-program-title" class="overlay-text top-title"></div>
-
-    <!-- Section 9: Rally -->
-    <div id="text-rally-main" class="overlay-text fraktur allcaps-spaced"
-    style="font-size:clamp(1.5rem,3vw,2.5rem);top:35%;left:50%;transform:translate(-50%,-50%);"></div>
-    <div id="text-rally-sub" class="overlay-text subtitle"
-    style="font-size:clamp(0.6rem,1vw,0.8rem);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-
-    <!-- Section 10: Putsch -->
-    <div id="text-putsch-1" class="overlay-text sans"
-    style="font-size:clamp(0.8rem,1.3vw,1.1rem);top:30%;left:50%;transform:translate(-50%,-50%);text-align:center;"></div>
-    <div id="text-putsch-2" class="overlay-text fraktur"
-    style="font-size:clamp(1.2rem,2vw,1.6rem);top:48%;left:50%;transform:translate(-50%,-50%);"></div>
-
-    <!-- Section 11: Final -->
-    <div id="text-final" class="overlay-text fraktur"
-    style="font-size:clamp(1.2rem,2.2vw,1.8rem);top:44%;left:50%;transform:translate(-50%,-50%);"></div>
-    <div id="text-final-sub" class="overlay-text subtitle"
-    style="font-size:clamp(0.6rem,1vw,0.8rem);top:56%;left:50%;transform:translate(-50%,-50%);"></div>
+</div>
 </div>
 
-<!-- End swastika -->
-<div id="end-swastika">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <rect x="38" y="10" width="24" height="80" fill="#d4c5a9" />
-        <rect x="10" y="38" width="80" height="24" fill="#d4c5a9" />
-        <rect x="44" y="14" width="12" height="22" fill="#1a1410" />
-        <rect x="62" y="14" width="12" height="22" fill="#1a1410" />
-        <rect x="44" y="64" width="12" height="22" fill="#1a1410" />
-        <rect x="62" y="64" width="12" height="22" fill="#1a1410" />
+<!-- ── Image Overlays ── -->
+<div class="image-overlay overlay-iron-cross" id="overlayIronCross">
+    <img src="assets/images/iron-cross-torn.png" alt="Torn Iron Cross"
+    onerror="this.style.display='none'">
+</div>
+<div class="image-overlay overlay-starving-child" id="overlayStarvingChild">
+    <img src="assets/images/starving-child-berlin-1919.jpg" alt="Starving child, Berlin 1919"
+    onerror="this.style.display='none'">
+</div>
+<div class="image-overlay overlay-putsch-medal" id="overlayPutschMedal">
+    <img src="assets/images/broken-putsch-medal.png" alt="Broken Putsch Medal"
+    onerror="this.style.display='none'">
+</div>
+<div class="image-overlay overlay-election-poster" id="overlayElectionPoster">
+    <img src="assets/images/election-poster-1928.jpg" alt="NSDAP election poster 1928"
+    onerror="this.style.display='none'">
+</div>
+
+<!-- ── Quote Overlays ── -->
+<div class="quote-overlay quote-m1" id="quoteM1">
+    <span class="quote-german">"Wir sind besiegt. Aber nicht ehrenhaft."</span>
+    <span class="quote-english">"We are defeated. But not with honor."</span>
+    <span class="quote-attribution">— Anonymer Veteran, 1918</span>
+</div>
+<div class="quote-overlay quote-m2" id="quoteM2">
+    <span class="quote-german">"Was wir brauchen, ist eine Religion der Politik."</span>
+    <span class="quote-english">"What we need is a religion of politics."</span>
+    <span class="quote-attribution">— Alfred Rosenberg, 1921</span>
+</div>
+<div class="quote-overlay quote-m3" id="quoteM3">
+    <span class="quote-german">"Sie können uns richten. Wir werden uns vor der Geschichte rechtfertigen."</span>
+    <span class="quote-english">"You may judge us. History will justify us."</span>
+    <span class="quote-attribution">— Adolf Hitler, Prozess 1924</span>
+</div>
+<div class="quote-overlay quote-m4" id="quoteM4">
+    <span class="quote-german">"Wir müssen warten. Das System tötet sich selbst."</span>
+    <span class="quote-english">"We must wait. The system will kill itself."</span>
+    <span class="quote-attribution">— Joseph Goebbels, Tagebuch 1926</span>
+</div>
+
+<!-- ── Swastika Fragments ── -->
+<div class="swastika-fragment fragment-1" id="fragment1">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(45, 100, 100)">
+            <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
+            M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
+            M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
+            M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
+            fill="currentColor"/>
+        </g>
+    </svg>
+</div>
+<div class="swastika-fragment fragment-2" id="fragment2">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(45, 100, 100)">
+            <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
+            M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
+            M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
+            M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
+            fill="currentColor"/>
+        </g>
+    </svg>
+</div>
+<div class="swastika-fragment fragment-3" id="fragment3">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(45, 100, 100)">
+            <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
+            M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
+            M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
+            M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
+            fill="currentColor"/>
+        </g>
+    </svg>
+</div>
+<div class="swastika-fragment fragment-4" id="fragment4">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(45, 100, 100)">
+            <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
+            M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
+            M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
+            M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
+            fill="currentColor"/>
+        </g>
     </svg>
 </div>
 
-<!-- UI: Mute Button -->
-<button id="mute-btn" title="Toggle Audio" aria-label="Mute audio">🔊 TON</button>
+<!-- ── Vignette ── -->
+<div class="vignette"></div>
 
-<!-- UI: Enter Button (appears at end) -->
-<button id="enter-btn">ENTER · KAPITEL II</button>
+<!-- ── Film Grain Canvas ── -->
+<canvas id="film-grain-canvas"></canvas>
 
-<!-- Loading indicator -->
-<div id="loading-indicator">ASSETS LOADING…</div>
-</div><!-- /#stage -->
-</div><!-- /#stage-wrapper -->
+<!-- ── Pause Indicator ── -->
+<div class="pause-indicator" id="pauseIndicator">⏸ Pausiert</div>
+
+<!-- ── End State ── -->
+<div class="end-state" id="endState">
+    <div class="end-swastika-ghost" id="endSwastikaGhost">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(45, 100, 100)">
+                <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
+                M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
+                M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
+                M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
+                fill="#ffffff"/>
+            </g>
+        </svg>
+    </div>
+    <div class="end-text-container" id="endTextContainer">
+        <p class="end-main-text">1929. Die Weltwirtschaft erzittert.<br>Die kleine Partei wartet.</p>
+        <p class="end-quote-text">"Es war nicht die Schuld des deutschen Volkes –<br>es war die Schuld der Verhältnisse."</p>
+        <p class="end-attribution">— Zeitgenössische Stimme, 1928</p>
+        <p class="end-quote-text" style="margin-top:1.5rem;">"It was not the fault of the German people –<br>it was the fault of the circumstances."</p>
+        <p class="end-attribution">— Contemporary voice, 1928</p>
+    </div>
+    <div class="end-enter-hint" id="endEnterHint">Drücke eine beliebige Taste, um die Chronik zu betreten</div>
+</div>
+</div>
+
+<!-- ═══════════════ ENTER SYMPHONY BUTTON ═══════════════ -->
+<div class="enter-symphony-wrapper" id="enterSymphonyWrapper">
+    <button class="enter-symphony-btn" id="enterSymphonyBtn" aria-label="Enter Symphony">
+        Enter Symphony
+    </button>
+    <span class="enter-symphony-subtitle">1918 – 1928 · Eine deutsche Perspektive</span>
+</div>
+
+<!-- ═══════════════ HIDDEN AUDIO ELEMENTS (MUSIC LAYERS) ═══════════════ -->
+<audio id="musicLayer1" preload="auto" src="assets/audios/music-layer1-cello-drone.mp3" loop></audio>
+<audio id="musicLayer2" preload="auto" src="assets/audios/music-layer2-bass-drum.mp3" loop></audio>
+<audio id="musicLayer3" preload="auto" src="assets/audios/music-layer3-piano-organ.mp3" loop></audio>
+<audio id="musicLayer4" preload="auto" src="assets/audios/music-layer4-strings.mp3" loop></audio>
+<audio id="telephoneRing" preload="auto" src="assets/audios/telephone-ring.mp3"></audio>
 
 <script>
     (function() {
-        // ─────────────────────────────────────
-        // MASTER TIMELINE CONTROLLER
-        // ─────────────────────────────────────
-        const TOTAL_DURATION = 120; // seconds
-        let elapsed = 0;
-        let timelineStarted = false;
-        let timelinePaused = false;
-        let timelineCompleted = false;
-        let masterInterval = null;
-        const TICK_INTERVAL = 100; // ms per tick
+        // ═══════════════════════════════════════════
+        // SYMPHONY CLASS — Master Timeline Controller
+        // ═══════════════════════════════════════════
+        class Symphony {
+            constructor() {
+                // ── DOM elements ──
+                this.container = document.getElementById('symphonyContainer');
+                this.enterWrapper = document.getElementById('enterSymphonyWrapper');
+                this.enterBtn = document.getElementById('enterSymphonyBtn');
+                this.pauseIndicator = document.getElementById('pauseIndicator');
+                this.endState = document.getElementById('endState');
+                this.endSwastikaGhost = document.getElementById('endSwastikaGhost');
+                this.endTextContainer = document.getElementById('endTextContainer');
+                this.endEnterHint = document.getElementById('endEnterHint');
+                this.grainCanvas = document.getElementById('film-grain-canvas');
+                this.grainCtx = this.grainCanvas.getContext('2d');
 
-        // ── DOM REFS ──
-        const stage = document.getElementById('stage');
-        const stageWrapper = document.getElementById('stage-wrapper');
-        const bgLayer = document.getElementById('bg-layer');
-        const vignette = document.getElementById('vignette');
-        const grainOverlay = document.getElementById('grain-overlay');
-        const grainFallback = document.getElementById('grain-fallback');
-        const splitDivider = document.getElementById('split-divider');
-        const muteBtn = document.getElementById('mute-btn');
-        const enterBtn = document.getElementById('enter-btn');
-        const endSwastika = document.getElementById('end-swastika');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const docScrollContainer = document.getElementById('doc-scroll-container');
-        const docScrollInner = document.getElementById('doc-scroll-inner');
+                // Video layers
+                this.videoLayers = {
+                    1: document.getElementById('videoLayer1'),
+                    2: document.getElementById('videoLayer2'),
+                    3: document.getElementById('videoLayer3'),
+                    4: document.getElementById('videoLayer4'),
+                };
+                this.videos = {
+                    1: document.getElementById('video1'),
+                    2: document.getElementById('video2'),
+                    3: document.getElementById('video3'),
+                    4: document.getElementById('video4'),
+                };
+                this.video4split = document.getElementById('video4split');
+                this.splitScreenOverlay = document.getElementById('splitScreenOverlay');
 
-        // Image refs
-        const imgMunich = document.getElementById('img-munich');
-        const imgSterneckerbrau = document.getElementById('img-sterneckerbrau');
-        const imgDapMeeting = document.getElementById('img-dap-meeting');
-        const imgHitlerProfile = document.getElementById('img-hitler-profile');
-        const imgEarlyRally = document.getElementById('img-early-rally');
-        const imgPutschLeft = document.getElementById('img-putsch-left');
-        const imgBloodFlag = document.getElementById('img-blood-flag');
+                // Image overlays
+                this.overlayIronCross = document.getElementById('overlayIronCross');
+                this.overlayStarvingChild = document.getElementById('overlayStarvingChild');
+                this.overlayPutschMedal = document.getElementById('overlayPutschMedal');
+                this.overlayElectionPoster = document.getElementById('overlayElectionPoster');
 
-        // Text refs
-        const textQuoteMain = document.getElementById('text-quote-main');
-        const textQuoteSub = document.getElementById('text-quote-sub');
-        const textLocation = document.getElementById('text-location');
-        const textQuote2Main = document.getElementById('text-quote2-main');
-        const textQuote2Sub = document.getElementById('text-quote2-sub');
-        const textDapInfo = document.getElementById('text-dap-info');
-        const textHitlerIntro = document.getElementById('text-hitler-intro');
-        const textHitlerName = document.getElementById('text-hitler-name');
-        const textProgramTitle = document.getElementById('text-program-title');
-        const textRallyMain = document.getElementById('text-rally-main');
-        const textRallySub = document.getElementById('text-rally-sub');
-        const textPutsch1 = document.getElementById('text-putsch-1');
-        const textPutsch2 = document.getElementById('text-putsch-2');
-        const textFinal = document.getElementById('text-final');
-        const textFinalSub = document.getElementById('text-final-sub');
-        const typewriterTarget1 = document.getElementById('typewriter-target-1');
-        const cursor1 = document.getElementById('cursor-1');
-        const typewriterTarget2 = document.getElementById('typewriter-target-2');
-        const cursor2 = document.getElementById('cursor-2');
+                // Quotes
+                this.quoteM1 = document.getElementById('quoteM1');
+                this.quoteM2 = document.getElementById('quoteM2');
+                this.quoteM3 = document.getElementById('quoteM3');
+                this.quoteM4 = document.getElementById('quoteM4');
 
-        // ── AUDIO MANAGER ──
-        let audioMuted = false;
-        const audioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-        const audioBuffers = {};
-        const activeSources = [];
+                // Swastika fragments
+                this.fragment1 = document.getElementById('fragment1');
+                this.fragment2 = document.getElementById('fragment2');
+                this.fragment3 = document.getElementById('fragment3');
+                this.fragment4 = document.getElementById('fragment4');
 
-        function initAudioContext() {
-            if (!audioCtx && audioContext) {
-                try {
-                    audioCtx = new audioContext();
-                } catch (e) {
-                    console.warn('AudioContext not supported');
-                }
+                // Election bars
+                this.barGroup1 = document.getElementById('barGroup1');
+                this.barGroup2 = document.getElementById('barGroup2');
+                this.barGroup3 = document.getElementById('barGroup3');
+                this.barFill1 = document.getElementById('barFill1');
+                this.barFill2 = document.getElementById('barFill2');
+                this.barFill3 = document.getElementById('barFill3');
+
+                // Audio elements
+                this.musicLayer1 = document.getElementById('musicLayer1');
+                this.musicLayer2 = document.getElementById('musicLayer2');
+                this.musicLayer3 = document.getElementById('musicLayer3');
+                this.musicLayer4 = document.getElementById('musicLayer4');
+                this.telephoneRing = document.getElementById('telephoneRing');
+
+                // ── State ──
+                this.audioContext = null;
+                this.gainNodes = {};
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.hasStarted = false;
+                this.startTime = 0;
+                this.pausedAt = 0;
+                this.totalPauseDuration = 0;
+                this.pauseStartTime = 0;
+                this.currentMovement = 0;
+                this.animationFrameId = null;
+                this.grainAnimId = null;
+                this.lastTapTime = 0;
+                this.fragmentFlickerTimers = [];
+                this.fragment4FlickerCount = 0;
+                this.movement4FragmentTimers = [];
+                this.endStateReached = false;
+
+                // ── Timeline markers (seconds from symphony start) ──
+                this.timeline = {
+                    openingStart: 0,
+                    movement1Start: 4.0, // 4s of black + cello before video
+                    movement1VideoFadeIn: 5.0,
+                    movement1QuoteIn: 9.0,
+                    movement1IronCrossIn: 4.5,
+                    movement1IronCrossOut: 18.0,
+                    movement1StarvingChildIn: 18.0,
+                    movement1End: 34.0,
+                    transition1: 35.0,
+
+                    movement2Start: 35.5,
+                    movement2QuoteIn: 40.0,
+                    movement2QuoteOut: 55.0,
+                    movement2End: 60.0,
+                    transition2: 60.5,
+
+                    movement3Start: 61.0,
+                    movement3QuoteIn: 70.0,
+                    movement3MedalIn: 64.0,
+                    movement3MedalOut: 88.0,
+                    movement3End: 95.0,
+                    transition3: 95.5,
+
+                    movement4Start: 96.0,
+                    movement4SplitReveal: 98.0,
+                    movement4QuoteIn: 103.0,
+                    movement4QuoteOut: 132.0,
+                    movement4PosterIn: 108.0,
+                    movement4Bar1In: 100.0,
+                    movement4Bar2In: 110.0,
+                    movement4Bar3In: 120.0,
+                    movement4End: 140.0,
+
+                    endFreeze: 140.0,
+                    endGhostAppear: 142.0,
+                    endTextReveal: 144.0,
+                    endComplete: 152.0,
+                };
+
+                // ── Bind methods ──
+                this.runTimeline = this.runTimeline.bind(this);
+                this.togglePause = this.togglePause.bind(this);
+                this.handleKeyDown = this.handleKeyDown.bind(this);
+                this.handleClick = this.handleClick.bind(this);
+                this.initGrainCanvas = this.initGrainCanvas.bind(this);
+                this.animateGrain = this.animateGrain.bind(this);
+
+                // ── Initialize ──
+                this.init();
             }
-            return audioCtx;
-        }
 
-        function playAudioFile(url, volume = 0.6, startTime = 0, fadeIn = 0) {
-            if (audioMuted || !audioCtx) return;
-            // Try to load and play
-            fetch(url)
-                .then(res => {
-                    if (!res.ok) throw new Error('Audio file not found');
-                    return res.arrayBuffer();
-                })
-                .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
-                .then(audioBuffer => {
-                    const source = audioCtx.createBufferSource();
-                    source.buffer = audioBuffer;
-                    const gainNode = audioCtx.createGain();
-                    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-                    gainNode.gain.linearRampToValueAtTime(volume, audioCtx.currentTime + fadeIn);
-                    source.connect(gainNode);
-                    gainNode.connect(audioCtx.destination);
-                    source.start(audioCtx.currentTime + startTime);
-                    activeSources.push({ source, gainNode });
-                })
-                .catch(() => {
-                    // Silent fail - audio file not uploaded yet
+            init() {
+                // Set up grain canvas
+                this.initGrainCanvas();
+                this.animateGrain();
+
+                // Event listeners
+                this.enterBtn.addEventListener('click', () => this.startSymphony());
+                this.enterWrapper.addEventListener('click', (e) => {
+                    if (e.target === this.enterWrapper) this.startSymphony();
                 });
-        }
+                document.addEventListener('keydown', this.handleKeyDown);
+                document.addEventListener('click', this.handleClick);
+                document.addEventListener('touchstart', this.handleClick, { passive: true });
 
-        function stopAllAudio() {
-            activeSources.forEach(({ source, gainNode }) => {
+                // End state enter hint
+                this.endEnterHint.addEventListener('click', () => this.navigateToTimeline());
+
+                // Handle window resize for grain canvas
+                window.addEventListener('resize', () => this.initGrainCanvas());
+            }
+
+            initGrainCanvas() {
+                this.grainCanvas.width = window.innerWidth;
+                this.grainCanvas.height = window.innerHeight;
+            }
+
+            animateGrain() {
+                if (!this.grainCtx) return;
+                const w = this.grainCanvas.width;
+                const h = this.grainCanvas.height;
+                const imageData = this.grainCtx.createImageData(w, h);
+                const data = imageData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const noise = Math.floor(Math.random() * 35);
+                    data[i] = noise;
+                    data[i + 1] = noise;
+                    data[i + 2] = noise;
+                    data[i + 3] = Math.floor(Math.random() * 25);
+                }
+
+                this.grainCtx.putImageData(imageData, 0, 0);
+                this.grainAnimId = requestAnimationFrame(() => this.animateGrain());
+            }
+
+            async startSymphony() {
+                if (this.hasStarted) return;
+
+                // Initialize AudioContext
                 try {
-                    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-                    setTimeout(() => {
-                        try { source.stop(); } catch (e) { /* already stopped */ }
-                    }, 350);
-                } catch (e) { /* ignore */ }
-            });
-            activeSources.length = 0;
-        }
+                    this.audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn('Web Audio API not available, proceeding without audio routing');
+                }
 
-        function toggleMute() {
-            audioMuted = !audioMuted;
-            if (audioMuted) {
-                stopAllAudio();
-                muteBtn.textContent = '🔇 STUMM';
-                muteBtn.classList.add('muted');
-            } else {
-                muteBtn.textContent = '🔊 TON';
-                muteBtn.classList.remove('muted');
-                initAudioContext();
+                // Set up gain nodes for all media elements
+                if (this.audioContext) {
+                    this.setupAudioRouting();
+                }
+
+                // Hide enter button
+                this.enterWrapper.classList.add('hidden');
+
+                // Unmute all videos
+                Object.values(this.videos).forEach(v => {
+                    v.muted = false;
+                    v.volume = 0.8;
+                });
+                if (this.video4split) {
+                    this.video4split.muted = false;
+                    this.video4split.volume = 0.7;
+                }
+
+                // Start music layer 1 (cello drone) at low volume
+                if (this.musicLayer1) {
+                    this.musicLayer1.volume = 0.35;
+                    this.musicLayer1.play().catch(() => {});
+                }
+
+                // Set state
+                this.hasStarted = true;
+                this.isPlaying = true;
+                this.isPaused = false;
+                this.startTime = performance.now();
+                this.totalPauseDuration = 0;
+                this.currentMovement = 0;
+                this.endStateReached = false;
+
+                // Start all videos at beginning (they'll be shown/hidden by timeline)
+                Object.values(this.videos).forEach(v => {
+                    v.currentTime = 0;
+                    v.play().catch(() => {});
+                });
+                if (this.video4split) {
+                    this.video4split.currentTime = 0;
+                    this.video4split.play().catch(() => {});
+                }
+
+                // Start the master timeline
+                this.runTimeline();
+
+                // Start fragment flicker scheduling for movement 1
+                this.scheduleFragment1Flickers();
             }
-        }
 
-        muteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMute();
-        });
+            setupAudioRouting() {
+                const ac = this.audioContext;
+                const masterGain = ac.createGain();
+                masterGain.gain.value = 0.85;
+                masterGain.connect(ac.destination);
 
-        // Initialize audio context on first user interaction
-        document.addEventListener('click', () => {
-            if (!audioCtx) initAudioContext();
-        }, { once: true });
-        document.addEventListener('keydown', () => {
-            if (!audioCtx) initAudioContext();
-        }, { once: true });
+                // Connect each video to a gain node
+                Object.entries(this.videos).forEach(([num, videoEl]) => {
+                    try {
+                        const source = ac.createMediaElementSource(videoEl);
+                        const gain = ac.createGain();
+                        gain.gain.value = 0.8;
+                        source.connect(gain);
+                        gain.connect(masterGain);
+                        this.gainNodes['video' + num] = gain;
+                    } catch (e) {
+                        // Already connected or not available
+                    }
+                });
 
-        // ── TYPEWRITER EFFECT ──
-        function typewriterEffect(targetElement, cursorElement, text, speed = 50, startDelay = 0) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    targetElement.textContent = '';
-                    cursorElement.style.display = 'inline-block';
-                    let i = 0;
-                    const interval = setInterval(() => {
-                        if (i < text.length) {
-                            targetElement.textContent += text.charAt(i);
-                            i++;
-                        } else {
-                            clearInterval(interval);
-                            cursorElement.style.display = 'none';
-                            resolve();
-                        }
-                    }, speed);
-                }, startDelay * 1000);
-            });
-        }
+                // Connect video4split
+                if (this.video4split) {
+                    try {
+                        const source4s = ac.createMediaElementSource(this.video4split);
+                        const gain4s = ac.createGain();
+                        gain4s.gain.value = 0.7;
+                        source4s.connect(gain4s);
+                        gain4s.connect(masterGain);
+                        this.gainNodes['video4split'] = gain4s;
+                    } catch (e) {}
+                }
 
-        // ── HELPER: SET IMAGE ACTIVE ──
-        function setActiveImage(imgElement) {
-            // Remove active from all images
-            [imgMunich, imgSterneckerbrau, imgDapMeeting, imgHitlerProfile, imgEarlyRally].forEach(img => {
-                if (img) img.classList.remove('active');
-            });
-            // Remove split classes
-            [imgPutschLeft, imgBloodFlag].forEach(img => {
-                if (img) img.classList.remove('active');
-            });
-            if (imgElement && imgElement.classList.contains('split-left')) {
-                imgElement.classList.add('active');
-            } else if (imgElement && imgElement.classList.contains('split-right')) {
-                imgElement.classList.add('active');
-            } else if (imgElement) {
-                imgElement.classList.add('active');
+                // Connect music layers
+                const musicEls = [
+                    { el: this.musicLayer1, key: 'music1' },
+                    { el: this.musicLayer2, key: 'music2' },
+                    { el: this.musicLayer3, key: 'music3' },
+                    { el: this.musicLayer4, key: 'music4' },
+                    { el: this.telephoneRing, key: 'telephone' },
+                ];
+
+                musicEls.forEach(({ el, key }) => {
+                    if (!el) return;
+                    try {
+                        const source = ac.createMediaElementSource(el);
+                        const gain = ac.createGain();
+                        gain.gain.value = 0;
+                        source.connect(gain);
+                        gain.connect(masterGain);
+                        this.gainNodes[key] = gain;
+                    } catch (e) {}
+                });
+
+                // Set initial music gain
+                if (this.gainNodes['music1']) this.gainNodes['music1'].gain.value = 0.35;
             }
-            splitDivider.classList.remove('visible');
-        }
 
-        function setSplitImages(leftImg, rightImg) {
-            [imgMunich, imgSterneckerbrau, imgDapMeeting, imgHitlerProfile, imgEarlyRally].forEach(img => {
-                if (img) img.classList.remove('active');
-            });
-            [imgPutschLeft, imgBloodFlag].forEach(img => {
-                if (img) img.classList.remove('active');
-            });
-            if (leftImg) leftImg.classList.add('active');
-            if (rightImg) rightImg.classList.add('active');
-            splitDivider.classList.add('visible');
-        }
-
-        function clearAllImages() {
-            document.querySelectorAll('#bg-layer img').forEach(img => img.classList.remove('active'));
-            splitDivider.classList.remove('visible');
-        }
-
-        // ── HELPER: SHOW/HIDE TEXT ──
-        function showText(el, delay = 0) {
-            setTimeout(() => { if (el) el.classList.add('visible'); }, delay * 1000);
-        }
-
-        function hideText(el, delay = 0) {
-            setTimeout(() => { if (el) el.classList.remove('visible'); }, delay * 1000);
-        }
-
-        function setText(el, text, delay = 0) {
-            setTimeout(() => { if (el) el.textContent = text; }, delay * 1000);
-        }
-
-        // ── HELPER: BG LAYER COLOR ──
-        function setBgColor(color, delay = 0) {
-            setTimeout(() => { bgLayer.style.background = color; }, delay * 1000);
-        }
-
-        // ── IMAGE LOAD TRACKING ──
-        let imagesLoaded = 0;
-        const totalImageSlots = 8;
-        function checkAllImagesAttempted() {
-            imagesLoaded++;
-            if (imagesLoaded >= totalImageSlots) {
-                loadingIndicator.style.opacity = '0';
+            getElapsed() {
+                if (!this.isPlaying) return this.pausedAt;
+                if (this.isPaused) return this.pausedAt;
+                return (performance.now() - this.startTime - this.totalPauseDuration) / 1000;
             }
-        }
-        // Attach load/error listeners to all images
-        document.querySelectorAll('#bg-layer img').forEach(img => {
-            img.addEventListener('load', checkAllImagesAttempted);
-            img.addEventListener('error', checkAllImagesAttempted);
-        });
-        // Also check grain overlay
-        grainOverlay.addEventListener('error', () => {
-            grainOverlay.classList.add('failed');
-        });
-        // Fallback: after 4 seconds, hide loading indicator anyway
-        setTimeout(() => {
-            loadingIndicator.style.opacity = '0';
-        }, 4000);
 
-        // ─────────────────────────────────────
-        // TIMELINE SECTIONS
-        // ─────────────────────────────────────
+            togglePause() {
+                if (!this.hasStarted || this.endStateReached) return;
 
-        function runSection1() {
-            // 0:00–0:03 — Black screen, sub-bass rumble
-            setBgColor('#000');
-            clearAllImages();
-            hideText(textQuoteMain);
-            hideText(textQuoteSub);
-            hideText(textLocation);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textProgramTitle);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            vignette.classList.remove('burning');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Audio: sub-bass rumble
-            playAudioFile('assets/audios/sub-bass-rumble.mp3', 0.5, 0, 1.5);
-        }
-
-        function runSection2() {
-            // 0:03–0:08 — Quote appears
-            setBgColor('#000');
-            clearAllImages();
-            hideText(textLocation);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            vignette.classList.remove('burning');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-
-            // Main quote typewriter
-            typewriterEffect(typewriterTarget1, cursor1,
-                '"Im Kampf um die Seele des deutschen Volkes..."', 70, 0.1);
-            // Subtitle appears 1 second later
-            setText(textQuoteSub, '"In the struggle for the soul of the German people..."', 1.2);
-            showText(textQuoteMain, 0.05);
-            showText(textQuoteSub, 1.2);
-            // Red glow pulse on main text
-            setTimeout(() => {
-                textQuoteMain.style.animation = 'redPulse 2.5s ease-in-out';
-            }, 1500);
-            setTimeout(() => {
-                textQuoteMain.style.animation = '';
-            }, 4200);
-            // Audio: footstep
-            playAudioFile('assets/audios/footstep-stone.mp3', 0.7, 0.5, 0.05);
-        }
-
-        function runSection3() {
-            // 0:08–0:12 — Pinprick of light, gradual reveal
-            setBgColor('#0a0806');
-            hideText(textQuoteMain);
-            hideText(textQuoteSub);
-            hideText(textLocation);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Subtle light at center
-            bgLayer.style.background =
-                'radial-gradient(ellipse at center, #1a1510 0%, #0a0806 40%, #000 100%)';
-            // Audio: wind
-            playAudioFile('assets/audios/wind-ambient.mp3', 0.35, 0, 1);
-        }
-
-        function runSection4() {
-            // 0:12–0:18 — Munich photo revealed
-            setActiveImage(imgMunich);
-            bgLayer.style.background = '';
-            setText(textLocation, 'München, 1919. 6 Millionen Arbeitslose. Der Dolchstoßmythos wird geboren.',
-                0.5);
-            showText(textLocation, 0.5);
-            hideText(textQuoteMain);
-            hideText(textQuoteSub);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Breathing zoom class already on img-munich
-            // Audio: crowd murmur, child cry, hammer
-            playAudioFile('assets/audios/crowd-murmur.mp3', 0.3, 0, 1.5);
-            playAudioFile('assets/audios/child-cry.mp3', 0.4, 2, 0.1);
-            playAudioFile('assets/audios/hammer-metal.mp3', 0.35, 3.5, 0.1);
-        }
-
-        function runSection5() {
-            // 0:18–0:25 — Quote overlay on Munich photo
-            setActiveImage(imgMunich);
-            bgLayer.style.background = '';
-            showText(textLocation);
-            hideText(textQuoteMain);
-            hideText(textQuoteSub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Quote text
-            setText(textQuote2Main, '"Es war nicht die Schuld des Volkes..."', 0.3);
-            setText(textQuote2Sub, '"It was not the fault of the people..."', 1.3);
-            showText(textQuote2Main, 0.3);
-            showText(textQuote2Sub, 1.3);
-            // Red pulse triggered by class
-            textQuote2Main.classList.add('red-pulse');
-            setTimeout(() => textQuote2Main.classList.remove('red-pulse'), 3500);
-            // Audio: piano key
-            playAudioFile('assets/audios/piano-low-cs.mp3', 0.5, 0.5, 0.3);
-        }
-
-        function runSection6() {
-            // 0:25–0:38 — Sterneckerbräu, DAP
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            // Crossfade to Sterneckerbräu
-            setTimeout(() => {
-                setActiveImage(imgSterneckerbrau);
-                bgLayer.style.background = '';
-            }, 800);
-            // Typewriter DAP info
-            const dapText =
-                'Januar 1919. Die Deutsche Arbeiterpartei (DAP) zählt weniger als 50 Mitglieder. Sie ist einer von vielen völkischen Splittergruppen. Niemand ahnt, was aus ihr werden wird.';
-            typewriterEffect(typewriterTarget2, cursor2, dapText, 40, 1.5);
-            showText(textDapInfo, 1.5);
-            // Audio: men murmuring, match strike, cough
-            playAudioFile('assets/audios/men-murmuring.mp3', 0.3, 0, 2);
-            playAudioFile('assets/audios/match-strike.mp3', 0.5, 3, 0.05);
-            playAudioFile('assets/audios/cough.mp3', 0.4, 5, 0.1);
-            // Subtle typewriter clacks
-            playAudioFile('assets/audios/typewriter-clack.mp3', 0.15, 2, 0.02);
-        }
-
-        function runSection7() {
-            // 0:38–0:52 — Hitler reveal
-            hideText(textDapInfo);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget2.textContent = '';
-            cursor2.style.display = 'none';
-            // Switch to DAP meeting interior then to Hitler profile
-            setTimeout(() => {
-                setActiveImage(imgDapMeeting);
-                bgLayer.style.background = '';
-            }, 400);
-            setTimeout(() => {
-                setActiveImage(imgHitlerProfile);
-                bgLayer.style.background = '';
-            }, 3500);
-            // Text sequence
-            setText(textHitlerIntro,
-                'September 1919. Ein ehemaliger Gefreiter tritt der Partei bei. Seine Nummer: 555.', 1);
-            showText(textHitlerIntro, 1);
-            setTimeout(() => {
-                setText(textHitlerIntro, 'Er heißt...');
-            }, 5500);
-            setTimeout(() => {
-                hideText(textHitlerIntro);
-                setText(textHitlerName, 'Hitler.');
-                showText(textHitlerName, 0);
-                textHitlerName.classList.add('ember-burn');
-                setTimeout(() => textHitlerName.classList.remove('ember-burn'), 2800);
-            }, 7500);
-            // Audio: orchestral swell
-            playAudioFile('assets/audios/orchestral-swell.mp3', 0.5, 1, 2);
-            playAudioFile('assets/audios/hitler-whisper.mp3', 0.55, 7.5, 0.3);
-        }
-
-        function runSection8() {
-            // 0:52–1:10 — 25-Point Program
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textDapInfo);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Show document scroll
-            setActiveImage(null);
-            bgLayer.style.background = '#1a1410';
-            setText(textProgramTitle, 'DAS PROGRAMM DER NSDAP – 1920', 0.3);
-            showText(textProgramTitle, 0.3);
-            // Reset scroll animation
-            docScrollInner.style.animation = 'none';
-            docScrollInner.offsetHeight; // trigger reflow
-            docScrollInner.style.animation = 'docScrollUp 18s linear forwards';
-            docScrollContainer.classList.add('visible');
-            // Audio: distant crowd chanting, drumbeat
-            playAudioFile('assets/audios/crowd-heil.mp3', 0.25, 0, 3);
-            playAudioFile('assets/audios/snare-drum.mp3', 0.35, 1, 0.5);
-        }
-
-        function runSection9() {
-            // 1:10–1:25 — First Rally
-            hideText(textProgramTitle);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textDapInfo);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Show early rally image
-            setActiveImage(imgEarlyRally);
-            bgLayer.style.background = '';
-            setText(textRallyMain, 'DEUTSCHLAND ERWACHE', 0.5);
-            setText(textRallySub, '"Deutschland awake" – Der Schlachtruf der Bewegung', 1.5);
-            showText(textRallyMain, 0.5);
-            showText(textRallySub, 1.5);
-            // Red pulse on main rally text
-            setTimeout(() => {
-                textRallyMain.style.animation = 'redPulse 3s ease-in-out';
-            }, 2000);
-            setTimeout(() => {
-                textRallyMain.style.animation = '';
-            }, 5500);
-            // Audio: Heil chants, snare roll, boot stamp
-            playAudioFile('assets/audios/crowd-heil.mp3', 0.4, 0, 1);
-            playAudioFile('assets/audios/snare-drum.mp3', 0.4, 2, 0.3);
-            playAudioFile('assets/audios/boot-stamp.mp3', 0.6, 6, 0.05);
-        }
-
-        function runSection10() {
-            // 1:25–1:45 — Beer Hall Putsch
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textProgramTitle);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textDapInfo);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            endSwastika.classList.remove('visible');
-            enterBtn.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Split screen
-            setSplitImages(imgPutschLeft, imgBloodFlag);
-            bgLayer.style.background = '';
-            // Staggered text
-            setText(textPutsch1, '8. November 1923. Der Putsch scheitert. 16 Tote.', 0.5);
-            showText(textPutsch1, 0.5);
-            setText(textPutsch2, 'Aber die Legende beginnt.', 4.5);
-            showText(textPutsch2, 4.5);
-            // Audio: gunshots, trumpet
-            playAudioFile('assets/audios/gunshots-3.mp3', 0.7, 1, 0.05);
-            playAudioFile('assets/audios/trumpet-taps.mp3', 0.45, 4, 0.5);
-            playAudioFile('assets/audios/horst-wessel-melody.mp3', 0.2, 8, 2);
-        }
-
-        function runSection11() {
-            // 1:45–2:00 — Burn to black, swastika, final text
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textProgramTitle);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textDapInfo);
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Burn to black (iris close)
-            vignette.classList.add('burning');
-            // Fade images
-            setTimeout(() => {
-                clearAllImages();
-                bgLayer.style.background = '#000';
-            }, 1500);
-            // Swastika appears
-            setTimeout(() => {
-                endSwastika.classList.add('visible');
-            }, 2500);
-            // Final text
-            setText(textFinal, 'Kapitel I: Der Kampf beginnt...', 4);
-            setText(textFinalSub, 'Chapter I: The struggle begins...', 5);
-            setTimeout(() => {
-                showText(textFinal, 0);
-                showText(textFinalSub, 0);
-            }, 4000);
-            // Fade swastika after text appears
-            setTimeout(() => {
-                endSwastika.classList.remove('visible');
-            }, 7000);
-            // Hide final text
-            setTimeout(() => {
-                hideText(textFinal);
-                hideText(textFinalSub);
-            }, 9000);
-            // Audio: door close, lock click, match strike
-            playAudioFile('assets/audios/door-close.mp3', 0.6, 0.5, 0.2);
-            playAudioFile('assets/audios/lock-click.mp3', 0.5, 2, 0.05);
-            playAudioFile('assets/audios/match-strike-final.mp3', 0.5, 5, 0.1);
-        }
-
-        function runEndState() {
-            // After 120s: black screen with Enter button
-            vignette.classList.remove('burning');
-            vignette.style.background = 'radial-gradient(ellipse at center, transparent 0%, #000 15%, #000 100%)';
-            clearAllImages();
-            bgLayer.style.background = '#000';
-            hideText(textFinal);
-            hideText(textFinalSub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textProgramTitle);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textLocation);
-            hideText(textDapInfo);
-            endSwastika.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Show Enter button
-            setTimeout(() => {
-                enterBtn.classList.add('visible');
-                stageWrapper.classList.add('interactive');
-                document.body.style.cursor = 'default';
-            }, 500);
-            stopAllAudio();
-        }
-
-        // ── ENTER BUTTON HANDLER ──
-        enterBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (timelineCompleted) {
-                // Flash and reset or go to Chapter II
-                enterBtn.textContent = 'KAPITEL II — COMING SOON';
-                enterBtn.style.borderColor = '#8b0000';
-                enterBtn.style.color = '#8b0000';
-                setTimeout(() => {
-                    enterBtn.textContent = 'ENTER · KAPITEL II';
-                    enterBtn.style.borderColor = 'rgba(180,150,120,0.6)';
-                    enterBtn.style.color = '#c8bfb0';
-                }, 2000);
-                // In a full project, this would navigate to chapter-ii.html
-                console.log('Transition to Chapter II triggered');
-            }
-        });
-
-        // ── MASTER TICK FUNCTION ──
-        function onTick() {
-            if (timelinePaused || timelineCompleted) return;
-            elapsed += TICK_INTERVAL / 1000;
-
-            // Section boundaries in seconds
-            if (elapsed >= 0 && elapsed < 0.15) {
-                // Section 1 triggered at start
-                if (!window._s1done) { window._s1done = true;
-                    runSection1(); }
-            }
-            if (elapsed >= 3.0 && elapsed < 3.15 && !window._s2done) {
-                window._s2done = true;
-                runSection2();
-            }
-            if (elapsed >= 8.0 && elapsed < 8.15 && !window._s3done) {
-                window._s3done = true;
-                runSection3();
-            }
-            if (elapsed >= 12.0 && elapsed < 12.15 && !window._s4done) {
-                window._s4done = true;
-                runSection4();
-            }
-            if (elapsed >= 18.0 && elapsed < 18.15 && !window._s5done) {
-                window._s5done = true;
-                runSection5();
-            }
-            if (elapsed >= 25.0 && elapsed < 25.15 && !window._s6done) {
-                window._s6done = true;
-                runSection6();
-            }
-            if (elapsed >= 38.0 && elapsed < 38.15 && !window._s7done) {
-                window._s7done = true;
-                runSection7();
-            }
-            if (elapsed >= 52.0 && elapsed < 52.15 && !window._s8done) {
-                window._s8done = true;
-                runSection8();
-            }
-            if (elapsed >= 70.0 && elapsed < 70.15 && !window._s9done) {
-                window._s9done = true;
-                runSection9();
-            }
-            if (elapsed >= 85.0 && elapsed < 85.15 && !window._s10done) {
-                window._s10done = true;
-                runSection10();
-            }
-            if (elapsed >= 105.0 && elapsed < 105.15 && !window._s11done) {
-                window._s11done = true;
-                runSection11();
-            }
-            if (elapsed >= TOTAL_DURATION && !timelineCompleted) {
-                timelineCompleted = true;
-                runEndState();
-            }
-        }
-
-        // ── START TIMELINE ──
-        function startTimeline() {
-            if (timelineStarted) return;
-            timelineStarted = true;
-            initAudioContext();
-            elapsed = 0;
-            window._s1done = false;
-            window._s2done = false;
-            window._s3done = false;
-            window._s4done = false;
-            window._s5done = false;
-            window._s6done = false;
-            window._s7done = false;
-            window._s8done = false;
-            window._s9done = false;
-            window._s10done = false;
-            window._s11done = false;
-            // Run Section 1 immediately
-            runSection1();
-            window._s1done = true;
-            masterInterval = setInterval(onTick, TICK_INTERVAL);
-            loadingIndicator.style.opacity = '0.5';
-            console.log('🎬 Kapitel I: Der Kampf beginnt — Timeline started (120 seconds)');
-        }
-
-        // ── KEYBOARD SHORTCUTS ──
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'm' || e.key === 'M') {
-                toggleMute();
-            }
-            if (e.key === ' ' && timelineCompleted) {
-                e.preventDefault();
-                enterBtn.click();
-            }
-            if (e.key === 'f' || e.key === 'F') {
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
+                if (this.isPaused) {
+                    // Resume
+                    this.isPaused = false;
+                    this.totalPauseDuration += (performance.now() - this.pauseStartTime);
+                    this.pauseIndicator.classList.remove('visible');
+                    // Resume all active videos
+                    Object.values(this.videos).forEach(v => {
+                        if (v.paused) v.play().catch(() => {});
+                    });
+                    if (this.video4split && this.video4split.paused) {
+                        this.video4split.play().catch(() => {});
+                    }
+                    // Resume music
+                    this.resumeAllMusic();
+                    this.runTimeline();
+                    // Resume fragment flickers for current movement
+                    this.resumeFragmentFlickers();
                 } else {
-                    stageWrapper.requestFullscreen().catch(() => {});
+                    // Pause
+                    this.isPaused = true;
+                    this.pauseStartTime = performance.now();
+                    this.pausedAt = this.getElapsed();
+                    this.pauseIndicator.classList.add('visible');
+                    // Pause all videos
+                    Object.values(this.videos).forEach(v => v.pause());
+                    if (this.video4split) this.video4split.pause();
+                    // Pause music
+                    this.pauseAllMusic();
+                    // Clear fragment flicker timers
+                    this.clearFragmentFlickers();
+                    if (this.animationFrameId) {
+                        cancelAnimationFrame(this.animationFrameId);
+                        this.animationFrameId = null;
+                    }
                 }
             }
-            if (e.key === 'r' || e.key === 'R') {
-                // Restart
-                if (e.ctrlKey || e.metaKey) {
+
+            pauseAllMusic() {
+                [
+                    this.musicLayer1, this.musicLayer2, this.musicLayer3, this.musicLayer4
+                ].forEach(el => {
+                    if (el && !el.paused) el.pause();
+                });
+            }
+
+            resumeAllMusic() {
+                const elapsed = this.getElapsed();
+                if (elapsed < this.timeline.movement2Start && this.musicLayer1) {
+                    this.musicLayer1.play().catch(() => {});
+                }
+                if (elapsed >= this.timeline.movement2Start && elapsed < this.timeline.movement3Start &&
+                    this.musicLayer2) {
+                    this.musicLayer2.play().catch(() => {});
+                }
+                if (elapsed >= this.timeline.movement3Start && elapsed < this.timeline.movement4Start &&
+                    this.musicLayer3) {
+                    this.musicLayer3.play().catch(() => {});
+                }
+                if (elapsed >= this.timeline.movement4Start && this.musicLayer4) {
+                    this.musicLayer4.play().catch(() => {});
+                }
+            }
+
+            handleKeyDown(e) {
+                if (!this.hasStarted) return;
+                if (e.code === 'Space' || e.code === 'KeyP') {
                     e.preventDefault();
-                    resetAndRestart();
+                    if (this.endStateReached) {
+                        this.navigateToTimeline();
+                        return;
+                    }
+                    this.togglePause();
+                }
+                if (this.endStateReached && e.key) {
+                    this.navigateToTimeline();
                 }
             }
-        });
 
-        function resetAndRestart() {
-            stopAllAudio();
-            clearInterval(masterInterval);
-            masterInterval = null;
-            timelineStarted = false;
-            timelineCompleted = false;
-            timelinePaused = false;
-            elapsed = 0;
-            vignette.classList.remove('burning');
-            vignette.style.background = '';
-            enterBtn.classList.remove('visible');
-            endSwastika.classList.remove('visible');
-            stageWrapper.classList.remove('interactive');
-            document.body.style.cursor = 'none';
-            clearAllImages();
-            bgLayer.style.background = '#000';
-            hideText(textQuoteMain);
-            hideText(textQuoteSub);
-            hideText(textLocation);
-            hideText(textQuote2Main);
-            hideText(textQuote2Sub);
-            hideText(textDapInfo);
-            hideText(textHitlerIntro);
-            hideText(textHitlerName);
-            hideText(textProgramTitle);
-            hideText(textRallyMain);
-            hideText(textRallySub);
-            hideText(textPutsch1);
-            hideText(textPutsch2);
-            hideText(textFinal);
-            hideText(textFinalSub);
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            loadingIndicator.style.opacity = '0.5';
-            window._s1done = false;
-            window._s2done = false;
-            window._s3done = false;
-            window._s4done = false;
-            window._s5done = false;
-            window._s6done = false;
-            window._s7done = false;
-            window._s8done = false;
-            window._s9done = false;
-            window._s10done = false;
-            window._s11done = false;
-            setTimeout(startTimeline, 300);
-            console.log('🔄 Restarting timeline...');
-        }
-
-        // ── INITIALIZATION ──
-        function init() {
-            // Set initial state
-            bgLayer.style.background = '#000';
-            vignette.style.background =
-                'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.75) 85%, #000 98%)';
-            document.body.style.cursor = 'none';
-            loadingIndicator.style.opacity = '0.5';
-            // Hide all texts
-            hideText(textQuoteMain, 0);
-            hideText(textQuoteSub, 0);
-            hideText(textLocation, 0);
-            hideText(textQuote2Main, 0);
-            hideText(textQuote2Sub, 0);
-            hideText(textDapInfo, 0);
-            hideText(textHitlerIntro, 0);
-            hideText(textHitlerName, 0);
-            hideText(textProgramTitle, 0);
-            hideText(textRallyMain, 0);
-            hideText(textRallySub, 0);
-            hideText(textPutsch1, 0);
-            hideText(textPutsch2, 0);
-            hideText(textFinal, 0);
-            hideText(textFinalSub, 0);
-            enterBtn.classList.remove('visible');
-            endSwastika.classList.remove('visible');
-            docScrollContainer.classList.remove('visible');
-            splitDivider.classList.remove('visible');
-            typewriterTarget1.textContent = '';
-            typewriterTarget2.textContent = '';
-            cursor1.style.display = 'none';
-            cursor2.style.display = 'none';
-            // Start after a short delay
-            setTimeout(startTimeline, 500);
-        }
-
-        // ── RESPONSIVE SCALING ──
-        function resizeStage() {
-            const wrapper = stageWrapper;
-            const stg = stage;
-            const wrapperW = wrapper.clientWidth;
-            const wrapperH = wrapper.clientHeight;
-            const aspectRatio = 16 / 9;
-            let scale;
-            if (wrapperW / wrapperH > aspectRatio) {
-                scale = wrapperH / (wrapperW / aspectRatio) * (wrapperW / (wrapperW / aspectRatio));
-                scale = wrapperH / (wrapperW / aspectRatio);
-            } else {
-                scale = wrapperW / (wrapperH * aspectRatio) * (wrapperH / (wrapperH * aspectRatio));
-                scale = wrapperW / (wrapperH * aspectRatio);
+            handleClick(e) {
+                if (!this.hasStarted) return;
+                if (this.endStateReached) {
+                    this.navigateToTimeline();
+                    return;
+                }
+                // Double-tap / double-click detection
+                const now = performance.now();
+                if (now - this.lastTapTime < 350) {
+                    // Double tap detected
+                    this.togglePause();
+                    this.lastTapTime = 0;
+                } else {
+                    this.lastTapTime = now;
+                }
             }
-            // Clamp and apply
-            const clampedScale = Math.min(scale, 1.5);
-            stg.style.transform = `scale(${clampedScale})`;
-            stg.style.width = '100%';
-            stg.style.height = '100%';
-            stg.style.maxWidth = '177.78vh';
-            stg.style.maxHeight = '56.25vw';
+
+            navigateToTimeline() {
+                // Placeholder — will load main timeline UI in future weeks
+                console.log('Navigate to timeline — implement in Week 2+');
+                // For now, reload the intro
+                // In production: window.location.href = '/timeline';
+                // or trigger a SPA route change
+                const msg = document.createElement('div');
+                msg.style.cssText = `
+                position:fixed;inset:0;z-index:999;display:flex;
+                align-items:center;justify-content:center;
+                background:#000;color:#fff;font-family:'Inter',sans-serif;
+                font-size:1.2rem;letter-spacing:0.1em;text-align:center;
+                padding:2rem;transition:opacity 0.5s;
+              `;
+                msg.textContent =
+                    'Die Chronik wird geladen…\n\nThe Timeline will load here.\n(Press Escape to return to the symphony)';
+                document.body.appendChild(msg);
+                const closeMsg = (ev) => {
+                    if (ev.code === 'Escape') {
+                        msg.style.opacity = '0';
+                        setTimeout(() => msg.remove(), 500);
+                        document.removeEventListener('keydown', closeMsg);
+                    }
+                };
+                document.addEventListener('keydown', closeMsg);
+            }
+
+            // ═══════════════════════════════════════════
+            // MASTER TIMELINE LOOP
+            // ═══════════════════════════════════════════
+            runTimeline() {
+                if (this.isPaused) return;
+                if (this.endStateReached) return;
+
+                const elapsed = this.getElapsed();
+                const t = this.timeline;
+
+                // ── MOVEMENT DETECTION ──
+                if (elapsed >= t.movement4Start && this.currentMovement !== 4) {
+                    this.enterMovement(4);
+                } else if (elapsed >= t.movement3Start && elapsed < t.movement4Start && this.currentMovement !==
+                    3) {
+                    this.enterMovement(3);
+                } else if (elapsed >= t.movement2Start && elapsed < t.movement3Start && this.currentMovement !==
+                    2) {
+                    this.enterMovement(2);
+                } else if (elapsed >= t.movement1Start && elapsed < t.movement2Start && this.currentMovement !==
+                    1) {
+                    this.enterMovement(1);
+                }
+
+                // ── MOVEMENT 1 EVENTS ──
+                if (this.currentMovement === 1) {
+                    // Iron Cross overlay
+                    if (elapsed >= t.movement1IronCrossIn && elapsed < t.movement1IronCrossOut) {
+                        this.overlayIronCross.classList.add('visible');
+                    } else if (elapsed >= t.movement1IronCrossOut) {
+                        this.overlayIronCross.classList.remove('visible');
+                    }
+                    // Starving child overlay
+                    if (elapsed >= t.movement1StarvingChildIn && elapsed < t.movement1End) {
+                        this.overlayStarvingChild.classList.add('visible');
+                    } else {
+                        this.overlayStarvingChild.classList.remove('visible');
+                    }
+                    // Quote
+                    if (elapsed >= t.movement1QuoteIn && elapsed < t.movement1End) {
+                        this.quoteM1.classList.add('visible');
+                    } else {
+                        this.quoteM1.classList.remove('visible');
+                    }
+                    // Video fade out near end
+                    if (elapsed >= t.movement1End - 2 && elapsed < t.movement1End) {
+                        this.videoLayers[1].classList.add('fading');
+                        this.fadeVideoAudio(1, 0, 2);
+                    }
+                    // Music transition to movement 2
+                    if (elapsed >= t.movement1End - 3 && this.musicLayer2 && this.musicLayer2.paused) {
+                        this.musicLayer2.volume = 0;
+                        this.musicLayer2.play().catch(() => {});
+                        this.fadeAudioGain('music2', 0, 0.25, 3);
+                    }
+                }
+
+                // ── MOVEMENT 2 EVENTS ──
+                if (this.currentMovement === 2) {
+                    if (elapsed >= t.movement2QuoteIn && elapsed < t.movement2QuoteOut) {
+                        this.quoteM2.classList.add('visible');
+                    } else {
+                        this.quoteM2.classList.remove('visible');
+                    }
+                    if (elapsed >= t.movement2End - 2 && elapsed < t.movement2End) {
+                        this.videoLayers[2].classList.add('fading');
+                        this.fadeVideoAudio(2, 0, 2);
+                    }
+                }
+
+                // ── MOVEMENT 3 EVENTS ──
+                if (this.currentMovement === 3) {
+                    if (elapsed >= t.movement3MedalIn && elapsed < t.movement3MedalOut) {
+                        this.overlayPutschMedal.classList.add('visible');
+                    } else {
+                        this.overlayPutschMedal.classList.remove('visible');
+                    }
+                    if (elapsed >= t.movement3QuoteIn && elapsed < t.movement3End) {
+                        this.quoteM3.classList.add('visible');
+                    } else {
+                        this.quoteM3.classList.remove('visible');
+                    }
+                    if (elapsed >= t.movement3End - 2 && elapsed < t.movement3End) {
+                        this.videoLayers[3].classList.add('fading');
+                        this.fadeVideoAudio(3, 0, 2);
+                    }
+                    // Music transition to movement 4
+                    if (elapsed >= t.movement3End - 4 && this.musicLayer4 && this.musicLayer4.paused) {
+                        this.musicLayer4.volume = 0;
+                        this.musicLayer4.play().catch(() => {});
+                        this.fadeAudioGain('music4', 0, 0.3, 4);
+                    }
+                }
+
+                // ── MOVEMENT 4 EVENTS ──
+                if (this.currentMovement === 4) {
+                    // Split screen reveal
+                    if (elapsed >= t.movement4SplitReveal) {
+                        this.splitScreenOverlay.classList.add('active');
+                    }
+                    // Election bars
+                    if (elapsed >= t.movement4Bar1In) this.barGroup1.classList.add('visible');
+                    if (elapsed >= t.movement4Bar2In) this.barGroup2.classList.add('visible');
+                    if (elapsed >= t.movement4Bar3In) this.barGroup3.classList.add('visible');
+                    // Quote
+                    if (elapsed >= t.movement4QuoteIn && elapsed < t.movement4QuoteOut) {
+                        this.quoteM4.classList.add('visible');
+                    } else {
+                        this.quoteM4.classList.remove('visible');
+                    }
+                    // Election poster
+                    if (elapsed >= t.movement4PosterIn && elapsed < t.movement4End) {
+                        this.overlayElectionPoster.classList.add('visible');
+                    } else {
+                        this.overlayElectionPoster.classList.remove('visible');
+                    }
+                    // Video fade out
+                    if (elapsed >= t.movement4End - 2 && elapsed < t.movement4End) {
+                        this.videoLayers[4].classList.add('fading');
+                        this.fadeVideoAudio(4, 0, 2);
+                    }
+                }
+
+                // ── END STATE ──
+                if (elapsed >= t.endFreeze && !this.endStateReached) {
+                    this.triggerEndState();
+                }
+
+                // ── END OF TIMELINE ──
+                if (elapsed >= t.endComplete) {
+                    this.finishSymphony();
+                    return;
+                }
+
+                this.animationFrameId = requestAnimationFrame(() => this.runTimeline());
+            }
+
+            enterMovement(num) {
+                // Deactivate all video layers
+                Object.values(this.videoLayers).forEach(l => {
+                    l.classList.remove('active', 'fading');
+                });
+                // Activate current
+                if (this.videoLayers[num]) {
+                    this.videoLayers[num].classList.add('active');
+                    // Ensure video is playing
+                    if (this.videos[num] && this.videos[num].paused) {
+                        this.videos[num].play().catch(() => {});
+                    }
+                }
+                // Hide split screen unless movement 4
+                if (num !== 4) {
+                    this.splitScreenOverlay.classList.remove('active');
+                    this.barGroup1.classList.remove('visible');
+                    this.barGroup2.classList.remove('visible');
+                    this.barGroup3.classList.remove('visible');
+                }
+                // Reset overlays from previous movements
+                if (num !== 1) {
+                    this.overlayIronCross.classList.remove('visible');
+                    this.overlayStarvingChild.classList.remove('visible');
+                }
+                if (num !== 3) {
+                    this.overlayPutschMedal.classList.remove('visible');
+                }
+                if (num !== 4) {
+                    this.overlayElectionPoster.classList.remove('visible');
+                }
+                // Reset quotes
+                [this.quoteM1, this.quoteM2, this.quoteM3, this.quoteM4].forEach(q => q.classList.remove(
+                    'visible'));
+
+                // Handle swastika fragments
+                this.clearFragmentFlickers();
+                this.hideAllFragments();
+                if (num === 1) this.scheduleFragment1Flickers();
+                if (num === 2) this.scheduleFragment2Flickers();
+                if (num === 3) this.scheduleFragment3Flickers();
+                if (num === 4) this.scheduleFragment4Flickers();
+
+                // Music transitions
+                this.handleMusicTransition(num);
+
+                this.currentMovement = num;
+                console.log(`Entered Movement ${num} at ${this.getElapsed().toFixed(1)}s`);
+            }
+
+            handleMusicTransition(num) {
+                const t = this.timeline;
+                // Fade out previous music, fade in new
+                if (num === 2) {
+                    this.fadeAudioGain('music1', 0.35, 0, 2);
+                    if (this.musicLayer2) {
+                        this.musicLayer2.volume = 0;
+                        this.musicLayer2.play().catch(() => {});
+                        this.fadeAudioGain('music2', 0, 0.3, 2.5);
+                    }
+                }
+                if (num === 3) {
+                    this.fadeAudioGain('music2', 0.3, 0, 2);
+                    if (this.musicLayer3) {
+                        this.musicLayer3.volume = 0;
+                        this.musicLayer3.play().catch(() => {});
+                        this.fadeAudioGain('music3', 0, 0.28, 3);
+                    }
+                }
+                if (num === 4) {
+                    this.fadeAudioGain('music3', 0.28, 0, 3);
+                    if (this.musicLayer4) {
+                        this.musicLayer4.volume = 0;
+                        this.musicLayer4.play().catch(() => {});
+                        this.fadeAudioGain('music4', 0, 0.3, 4);
+                    }
+                }
+            }
+
+            fadeVideoAudio(videoNum, targetGain, durationSec) {
+                const key = 'video' + videoNum;
+                if (this.gainNodes[key]) {
+                    const gain = this.gainNodes[key];
+                    const startVal = gain.gain.value;
+                    const startTime = this.audioContext.currentTime;
+                    gain.gain.setValueAtTime(startVal, startTime);
+                    gain.gain.linearRampToValueAtTime(targetGain, startTime + durationSec);
+                }
+                // Also adjust element volume as fallback
+                if (this.videos[videoNum]) {
+                    const vol = this.videos[videoNum].volume;
+                    const steps = 20;
+                    const interval = (durationSec * 1000) / steps;
+                    const decrement = vol / steps;
+                    let step = 0;
+                    const fadeInterval = setInterval(() => {
+                        step++;
+                        if (this.videos[videoNum]) {
+                            this.videos[videoNum].volume = Math.max(0, vol - decrement * step);
+                        }
+                        if (step >= steps) clearInterval(fadeInterval);
+                    }, interval);
+                }
+            }
+
+            fadeAudioGain(key, fromVal, toVal, durationSec) {
+                if (!this.audioContext || !this.gainNodes[key]) return;
+                const gain = this.gainNodes[key];
+                const startTime = this.audioContext.currentTime;
+                gain.gain.setValueAtTime(fromVal, startTime);
+                gain.gain.linearRampToValueAtTime(toVal, startTime + durationSec);
+            }
+
+            // ═══════════════════════════════════════════
+            // SWASTIKA FRAGMENT FLICKER SCHEDULERS
+            // ═══════════════════════════════════════════
+            hideAllFragments() {
+                [this.fragment1, this.fragment2, this.fragment3, this.fragment4].forEach(f => {
+                    f.style.opacity = '0';
+                    f.classList.remove('flickering');
+                });
+            }
+
+            clearFragmentFlickers() {
+                this.fragmentFlickerTimers.forEach(t => clearTimeout(t));
+                this.fragmentFlickerTimers = [];
+                this.movement4FragmentTimers.forEach(t => clearTimeout(t));
+                this.movement4FragmentTimers = [];
+            }
+
+            resumeFragmentFlickers() {
+                this.clearFragmentFlickers();
+                if (this.currentMovement === 1) this.scheduleFragment1Flickers();
+                if (this.currentMovement === 2) this.scheduleFragment2Flickers();
+                if (this.currentMovement === 3) this.scheduleFragment3Flickers();
+                if (this.currentMovement === 4 && this.fragment4FlickerCount < 2) this.scheduleFragment4Flickers();
+            }
+
+            scheduleFragment1Flickers() {
+                // Fragment 1: Top-right peek, dark red #3b0000, flickers every 2-5s, lasting ~80ms
+                const scheduleNext = () => {
+                    if (this.currentMovement !== 1 || this.isPaused) return;
+                    const delay = 2000 + Math.random() * 3000; // 2-5 seconds
+                    const timer = setTimeout(() => {
+                        if (this.currentMovement !== 1 || this.isPaused) return;
+                        this.fragment1.style.opacity = '0.15';
+                        this.fragment1.classList.add('flickering');
+                        const offTimer = setTimeout(() => {
+                            this.fragment1.style.opacity = '0';
+                            this.fragment1.classList.remove('flickering');
+                        }, 80 + Math.random() * 40);
+                        this.fragmentFlickerTimers.push(offTimer);
+                        scheduleNext();
+                    }, delay);
+                    this.fragmentFlickerTimers.push(timer);
+                };
+                scheduleNext();
+            }
+
+            scheduleFragment2Flickers() {
+                // Fragment 2: Top-right larger, mid red #6b0000, flickers more aggressively every 0.5-2s
+                const scheduleNext = () => {
+                    if (this.currentMovement !== 2 || this.isPaused) return;
+                    const delay = 500 + Math.random() * 1500;
+                    const timer = setTimeout(() => {
+                        if (this.currentMovement !== 2 || this.isPaused) return;
+                        this.fragment2.style.opacity = (0.1 + Math.random() * 0.18).toString();
+                        this.fragment2.classList.add('flickering');
+                        const offTimer = setTimeout(() => {
+                            this.fragment2.style.opacity = '0';
+                            this.fragment2.classList.remove('flickering');
+                        }, 60 + Math.random() * 100);
+                        this.fragmentFlickerTimers.push(offTimer);
+                        scheduleNext();
+                    }, delay);
+                    this.fragmentFlickerTimers.push(timer);
+                };
+                scheduleNext();
+            }
+
+            scheduleFragment3Flickers() {
+                // Fragment 3: Bottom-left, brighter red #8a0000, with occasional white flash
+                const scheduleNext = () => {
+                    if (this.currentMovement !== 3 || this.isPaused) return;
+                    const delay = 800 + Math.random() * 2500;
+                    const timer = setTimeout(() => {
+                        if (this.currentMovement !== 3 || this.isPaused) return;
+                        const useWhiteFlash = Math.random() < 0.2;
+                        if (useWhiteFlash) {
+                            this.fragment3.style.opacity = '0.22';
+                            this.fragment3.style.filter = 'brightness(3)';
+                        } else {
+                            this.fragment3.style.opacity = (0.12 + Math.random() * 0.16).toString();
+                            this.fragment3.style.filter = 'none';
+                        }
+                        this.fragment3.classList.add('flickering');
+                        const offTimer = setTimeout(() => {
+                            this.fragment3.style.opacity = '0';
+                            this.fragment3.classList.remove('flickering');
+                            this.fragment3.style.filter = 'none';
+                        }, 70 + Math.random() * 60);
+                        this.fragmentFlickerTimers.push(offTimer);
+                        scheduleNext();
+                    }, delay);
+                    this.fragmentFlickerTimers.push(timer);
+                };
+                scheduleNext();
+            }
+
+            scheduleFragment4Flickers() {
+                // Fragment 4: Top-left, dark grey, flickers ONLY TWICE during the entire 45s movement
+                this.fragment4FlickerCount = 0;
+                const delays = [8000 + Math.random() * 12000, 25000 + Math.random() * 12000]; // Two flickers spread out
+                delays.forEach(delay => {
+                    const timer = setTimeout(() => {
+                        if (this.currentMovement !== 4 || this.isPaused) return;
+                        if (this.fragment4FlickerCount >= 2) return;
+                        this.fragment4FlickerCount++;
+                        this.fragment4.style.opacity = '0.06';
+                        this.fragment4.classList.add('flickering');
+                        const offTimer = setTimeout(() => {
+                            this.fragment4.style.opacity = '0';
+                            this.fragment4.classList.remove('flickering');
+                        }, 150 + Math.random() * 100);
+                        this.movement4FragmentTimers.push(offTimer);
+                    }, delay);
+                    this.movement4FragmentTimers.push(timer);
+                });
+            }
+
+            // ═══════════════════════════════════════════
+            // END STATE
+            // ═══════════════════════════════════════════
+            triggerEndState() {
+                this.endStateReached = true;
+                this.clearFragmentFlickers();
+                this.hideAllFragments();
+
+                // Stop all videos
+                Object.values(this.videos).forEach(v => v.pause());
+                if (this.video4split) this.video4split.pause();
+                Object.values(this.videoLayers).forEach(l => l.classList.remove('active', 'fading'));
+                this.splitScreenOverlay.classList.remove('active');
+
+                // Telephone ring sound
+                if (this.telephoneRing) {
+                    this.telephoneRing.volume = 0.5;
+                    this.telephoneRing.play().catch(() => {});
+                    if (this.gainNodes['telephone']) {
+                        const gain = this.gainNodes['telephone'];
+                        const now = this.audioContext.currentTime;
+                        gain.gain.setValueAtTime(0.5, now);
+                        gain.gain.linearRampToValueAtTime(0, now + 2.5);
+                    }
+                }
+
+                // Abrupt music cut
+                [
+                    this.musicLayer1, this.musicLayer2, this.musicLayer3, this.musicLayer4
+                ].forEach(el => {
+                    if (el) {
+                        el.pause();
+                        el.volume = 0;
+                    }
+                });
+                Object.keys(this.gainNodes).forEach(k => {
+                    if (k.startsWith('music') && this.gainNodes[k]) {
+                        const gain = this.gainNodes[k];
+                        const now = this.audioContext.currentTime;
+                        gain.gain.setValueAtTime(gain.gain.value, now);
+                        gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                    }
+                });
+
+                // Show end state
+                this.endState.classList.add('visible');
+
+                // Ghost swastika fades in then out
+                setTimeout(() => {
+                    this.endSwastikaGhost.style.opacity = '0.025';
+                }, 1500);
+                setTimeout(() => {
+                    this.endSwastikaGhost.style.opacity = '0';
+                }, 5000);
+
+                // Cancel timeline loop
+                if (this.animationFrameId) {
+                    cancelAnimationFrame(this.animationFrameId);
+                    this.animationFrameId = null;
+                }
+            }
+
+            finishSymphony() {
+                if (this.animationFrameId) {
+                    cancelAnimationFrame(this.animationFrameId);
+                    this.animationFrameId = null;
+                }
+                this.isPlaying = false;
+                console.log('Symphony complete. End state active.');
+            }
+
+            // ═══════════════════════════════════════════
+            // DESTROY / CLEANUP
+            // ═══════════════════════════════════════════
+            destroy() {
+                this.clearFragmentFlickers();
+                if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+                if (this.grainAnimId) cancelAnimationFrame(this.grainAnimId);
+                if (this.audioContext) this.audioContext.close().catch(() => {});
+                document.removeEventListener('keydown', this.handleKeyDown);
+                document.removeEventListener('click', this.handleClick);
+                document.removeEventListener('touchstart', this.handleClick);
+            }
         }
 
-        window.addEventListener('resize', resizeStage);
-        resizeStage();
+        // ═══════════════════════════════════════════
+        // INITIALIZE SYMPHONY ON PAGE LOAD
+        // ═══════════════════════════════════════════
+        const symphony = new Symphony();
 
-        // ── START ──
-        init();
+        // Expose for debugging
+        window.__symphony = symphony;
 
-        // ── EXPORT FOR DEBUG ──
-        window._timelineAPI = {
-            reset: resetAndRestart,
-            toggleMute,
-            getElapsed: () => elapsed,
-            isComplete: () => timelineCompleted,
-            getAudioMuted: () => audioMuted,
-        };
-
-        console.log('%c⚔️ Kapitel I: Der Kampf beginnt %c— Ready',
-            'font-size:1.2em;color:#b8935a;', 'color:#c8bfb0;');
-        console.log('%cPress %cR %cto restart | %cM %cto mute | %cF %cfor fullscreen',
-            'color:#888;', 'color:#b8935a;font-weight:bold;', 'color:#888;',
-            'color:#b8935a;font-weight:bold;', 'color:#888;',
-            'color:#b8935a;font-weight:bold;', 'color:#888;');
-        console.log('%cAll assets referenced from /assets/images/ and /assets/audios/',
-            'color:#666;font-style:italic;');
+        console.log('%c🎻 Symphony of Ruin %cinitialized.',
+            'font-family:Cinzel,serif;font-size:1.2em;color:#cc0000;',
+            'color:#888;');
+        console.log('%c1918–1928 · The Wound · Birth · Putsch · Lean Years',
+            'font-family:Inter,sans-serif;font-size:0.8em;color:#666;');
+        console.log('%cClick "Enter Symphony" to begin. Space or double-tap to pause.',
+            'font-family:Inter,sans-serif;font-size:0.7em;color:#555;');
+        console.log('%c── Asset checklist below ──', 'color:#444;');
+        console.log('%c📁 assets/videos/',
+            'color:#aaa;font-weight:bold;');
+        console.log('  movement1-wound.mp4');
+        console.log('  movement2-birth.mp4');
+        console.log('  movement3-putsch.mp4');
+        console.log('  movement4-lean-years.mp4');
+        console.log('%c📁 assets/images/', 'color:#aaa;font-weight:bold;');
+        console.log('  iron-cross-torn.png');
+        console.log('  starving-child-berlin-1919.jpg');
+        console.log('  broken-putsch-medal.png');
+        console.log('  election-poster-1928.jpg');
+        console.log('%c📁 assets/audios/', 'color:#aaa;font-weight:bold;');
+        console.log('  music-layer1-cello-drone.mp3');
+        console.log('  music-layer2-bass-drum.mp3');
+        console.log('  music-layer3-piano-organ.mp3');
+        console.log('  music-layer4-strings.mp3');
+        console.log('  telephone-ring.mp3');
     })();
 </script>
 </body>
