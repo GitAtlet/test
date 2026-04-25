@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "title": "1918–1928: The Symphony of Ruin",
+    "presentation": "A German Perspective",
+    "era": "The Wound · The Birth · The Putsch · The Wait"
+  },
+
+  "timeline": {
+    "openingStart": 0,
+    "letterboxCinematicIn": 2.5,
+    "movement1Start": 4.0,
+    "movement1VideoFadeIn": 5.0,
+    "movement1QuoteIn": 9.0,
+    "movement1IronCrossIn": 4.5,
+    "movement1IronCrossOut": 18.0,
+    "movement1StarvingChildIn": 18.0,
+    "movement1DateStampIn": 3.5,
+    "movement1DateStampOut": 30.0,
+    "movement1InflationIn": 8.0,
+    "movement1InflationOut": 33.0,
+    "movement1CommentaryIn": 6.0,
+    "movement1CommentaryOut": 33.5,
+    "movement1End": 34.0,
+    "transition1": 35.0,
+    "movement2Start": 35.5,
+    "movement2QuoteIn": 40.0,
+    "movement2QuoteOut": 55.0,
+    "movement2DateStampIn": 36.0,
+    "movement2DateStampOut": 58.0,
+    "movement2CommentaryIn": 37.0,
+    "movement2CommentaryOut": 59.5,
+    "movement2End": 60.0,
+    "transition2": 60.5,
+    "movement3Start": 61.0,
+    "movement3QuoteIn": 70.0,
+    "movement3MedalIn": 64.0,
+    "movement3MedalOut": 88.0,
+    "movement3DateStampIn": 62.0,
+    "movement3DateStampOut": 93.0,
+    "movement3CommentaryIn": 63.0,
+    "movement3CommentaryOut": 94.5,
+    "movement3End": 95.0,
+    "transition3": 95.5,
+    "movement4Start": 96.0,
+    "movement4SplitReveal": 98.0,
+    "movement4QuoteIn": 103.0,
+    "movement4QuoteOut": 132.0,
+    "movement4PosterIn": 108.0,
+    "movement4DateStampIn": 97.0,
+    "movement4Bar1In": 100.0,
+    "movement4Bar2In": 110.0,
+    "movement4Bar3In": 120.0,
+    "movement4CommentaryIn": 98.5,
+    "movement4CommentaryOut": 139.0,
+    "movement4End": 140.0,
+    "newsTickerIn": 98.0,
+    "endFreeze": 140.0,
+    "endGhostAppear": 142.0,
+    "endTextReveal": 144.0,
+    "endComplete": 152.0
+  },
+
+  "commentary": {
+    "1": {
+      "text": "November 1918: World War I ends. The Kaiser abdicates, the republic is proclaimed, and the peace terms leave Germany shaken and unstable.",
+      "date": "1918–1919"
+    },
+    "2": {
+      "text": "February 1920: In Munich, the party is renamed NSDAP. Hitler presents the 25-point program, and the movement stays small but grows louder.",
+      "date": "1920–1921"
+    },
+    "3": {
+      "text": "November 1923: Hyperinflation peaks at 4.2 trillion Mark per US Dollar. The Munich putsch fails, Hitler is jailed, and the trial gives him national attention.",
+      "date": "1923–1924"
+    },
+    "4": {
+      "text": "1924–1928: During the \"Golden Twenties,\" recovery returns and NSDAP vote shares stay low. Hitler reorganizes and waits for a larger crisis.",
+      "date": "1924–1928"
+    }
+  },
+
+  "movements": [
+    {
+      "id": 1,
+      "numeral": "I",
+      "title": "The Wound",
+      "period": "1918–1919",
+      "tagline": "The armistice cuts deeper than the bayonet.",
+      "video": "assets/videos/movement1-wound.mp4",
+      "music": "assets/audios/music-layer1-cello-drone.mp3",
+      "quote": {
+        "german": "\"Wir sind <span class=\"bloody\">besiegt</span>. Aber nicht ehrenhaft.\"",
+        "english": "\"We are <span class=\"bloody\">defeated</span>. But not with honor.\"",
+        "attribution": "— Anonymous Veteran, 1918",
+        "cssClass": "quote-m1"
+      },
+      "images": [
+        {
+          "id": "overlayIronCross",
+          "cssClass": "overlay-iron-cross",
+          "src": "assets/images/iron-cross-torn.png",
+          "alt": "Torn Iron Cross"
+        },
+        {
+          "id": "overlayStarvingChild",
+          "cssClass": "overlay-starving-child",
+          "src": "assets/images/starving-child-berlin-1919.jpg",
+          "alt": "Starving child, Berlin 1919"
+        }
+      ],
+      "dateStamp": "November 1918",
+      "dateStampClass": "date-stamp-bottom-right",
+      "inflationCounter": true,
+      "inflationStart": 4.2,
+      "inflationEnd": 4200000000000,
+      "duration": 34
+    },
+    {
+      "id": 2,
+      "numeral": "II",
+      "title": "The Birth",
+      "period": "1920–1921",
+      "tagline": "From the rubble, a name.",
+      "video": "assets/videos/movement2-birth.mp4",
+      "music": "assets/audios/music-layer2-bass-drum.mp3",
+      "quote": {
+        "german": "\"Was wir brauchen, ist eine <span class=\"bloody\">Religion der Politik</span>.\"",
+        "english": "\"What we need is a <span class=\"bloody\">religion of politics</span>.\"",
+        "attribution": "— Alfred Rosenberg, 1921",
+        "cssClass": "quote-m2"
+      },
+      "images": [],
+      "dateStamp": "February 1920",
+      "dateStampClass": "date-stamp-top-left",
+      "inflationCounter": false,
+      "duration": 25
+    },
+    {
+      "id": 3,
+      "numeral": "III",
+      "title": "The Putsch",
+      "period": "November 1923",
+      "tagline": "Failure as foundation.",
+      "video": "assets/videos/movement3-putsch.mp4",
+      "music": "assets/audios/music-layer3-piano-organ.mp3",
+      "quote": {
+        "german": "\"Sie können uns <span class=\"bloody\">richten</span>. Wir werden uns vor der Geschichte rechtfertigen.\"",
+        "english": "\"You may <span class=\"bloody\">judge</span> us. History will justify us.\"",
+        "attribution": "— Adolf Hitler, Trial 1924",
+        "cssClass": "quote-m3"
+      },
+      "images": [
+        {
+          "id": "overlayPutschMedal",
+          "cssClass": "overlay-putsch-medal",
+          "src": "assets/images/broken-putsch-medal.png",
+          "alt": "Broken Putsch Medal"
+        }
+      ],
+      "dateStamp": "November 1923",
+      "dateStampClass": "date-stamp-bottom-right",
+      "inflationCounter": false,
+      "duration": 34
+    },
+    {
+      "id": 4,
+      "numeral": "IV",
+      "title": "The Wait",
+      "period": "1924–1928",
+      "tagline": "Patience is the weapon of the desperate.",
+      "video": "assets/videos/movement4-lean-years.mp4",
+      "music": "assets/audios/music-layer4-strings.mp3",
+      "quote": {
+        "german": "\"Wir müssen warten. Das System <span class=\"bloody\">tötet</span> sich selbst.\"",
+        "english": "\"We must wait. The system will <span class=\"bloody\">kill</span> itself.\"",
+        "attribution": "— Joseph Goebbels, Diary 1926",
+        "cssClass": "quote-m4"
+      },
+      "images": [
+        {
+          "id": "overlayElectionPoster",
+          "cssClass": "overlay-election-poster",
+          "src": "assets/images/election-poster-1928.jpg",
+          "alt": "NSDAP election poster 1928"
+        }
+      ],
+      "dateStamp": "May 1928",
+      "dateStampClass": "date-stamp-top-left",
+      "inflationCounter": false,
+      "elections": [
+        { "label": "May 1924",      "percent": "6.5%", "fill": "fill-1924may" },
+        { "label": "December 1924", "percent": "3.0%", "fill": "fill-1924dec" },
+        { "label": "May 1928",      "percent": "2.6%", "fill": "fill-1928"    }
+      ],
+      "newsTicker": "Armistice · Kaiser Abdicates · Republic Proclaimed · Spartacist Uprising · Treaty of Versailles · Stab-in-the-back Myth · Kapp Putsch · Occupation of the Ruhr · Hyperinflation · Hitler Putsch · Landsberg Imprisonment · Mein Kampf · Golden Twenties · Locarno Treaties · League of Nations · Dawes Plan · Young Plan · Global Crash Looms",
+      "duration": 44
+    }
+  ],
+
+  "endState": {
+    "mainText": "1929. The world economy trembles.<br>The small party waits.",
+    "quoteText": "\"It was not the fault of the German people —<br>it was the fault of circumstances.\"",
+    "attribution": "— Contemporary Voice, 1928",
+    "hint": "Press any key to review the introduction movements"
+  }
+}

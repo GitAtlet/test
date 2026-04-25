@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I · The Wound — Symphony of Ruin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/symphony.css">
+    <style>
+        /* Intro movement pages restore the cursor for navigation */
+        html, body { cursor: auto; }
+        .intro-nav { opacity: 0; }
+        .intro-nav:hover,
+        .intro-nav:focus-within { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ MOVEMENT CONTAINER ═══════════════ -->
+    <div class="symphony-container" id="symphonyContainer">
+
+        <canvas id="procedural-bg-canvas"></canvas>
+
+        <div class="video-layer" id="videoLayer">
+            <video id="chapterVideo" loop muted playsinline preload="auto"
+                src="../assets/videos/movement1-wound.mp4"
+                poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Cdefs%3E%3CradialGradient id='g' cx='40%25' cy='35%25'%3E%3Cstop offset='0%25' stop-color='%231a0a05'/%3E%3Cstop offset='100%25' stop-color='%23000000'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='1920' height='1080'/%3E%3Ctext x='960' y='540' text-anchor='middle' fill='%23332220' font-family='serif' font-size='24'%3E1918 %C2%B7 The Wound%3C/text%3E%3C/svg%3E">
+            </video>
+        </div>
+
+        <!-- Image Overlays -->
+        <div class="image-overlay overlay-iron-cross" id="overlayIronCross">
+            <img src="../assets/images/iron-cross-torn.png" alt="Torn Iron Cross" loading="eager"
+                onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><rect x=\'30\' y=\'10\' width=\'40\' height=\'80\' fill=\'%235a3a20\' opacity=\'0.7\' rx=\'2\'/><rect x=\'10\' y=\'30\' width=\'80\' height=\'40\' fill=\'%235a3a20\' opacity=\'0.7\' rx=\'2\'/><text x=\'50\' y=\'96\' text-anchor=\'middle\' fill=\'%23997755\' font-size=\'8\' font-family=\'serif\'>EISERNES KREUZ</text></svg></div>'">
+        </div>
+        <div class="image-overlay overlay-starving-child" id="overlayStarvingChild">
+            <img src="../assets/images/starving-child-berlin-1919.jpg" alt="Starving child, Berlin 1919" loading="eager"
+                onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\' style=\'aspect-ratio:3/4;\'><svg viewBox=\'0 0 60 80\' xmlns=\'http://www.w3.org/2000/svg\'><rect fill=\'%231a1008\' width=\'60\' height=\'80\' rx=\'2\'/><circle cx=\'30\' cy=\'30\' r=\'16\' fill=\'%233a2215\' opacity=\'0.8\'/><text x=\'30\' y=\'74\' text-anchor=\'middle\' fill=\'%23775533\' font-size=\'6\' font-family=\'serif\'>BERLIN · 1919</text></svg></div>'">
+        </div>
+
+        <!-- Quote -->
+        <div class="quote-overlay quote-m1" id="chapterQuote">
+            <span class="quote-german">"Wir sind <span class="bloody">besiegt</span>. Aber nicht ehrenhaft."</span>
+            <span class="quote-english">"We are <span class="bloody">defeated</span>. But not with honor."</span>
+            <span class="quote-attribution">— Anonymous Veteran, 1918</span>
+        </div>
+
+        <!-- Inflation Counter -->
+        <div class="inflation-counter inflation-counter-top" id="inflationCounter">
+            <span class="inflation-label">1 US Dollar =</span>
+            <span class="inflation-value" id="inflationValue">4.20 Mark</span>
+        </div>
+
+        <!-- Historical Commentary -->
+        <div class="historical-commentary" id="historicalCommentary">
+            <span class="commentary-text" id="commentaryText"></span><span class="cursor-blink" id="commentaryCursor"></span>
+        </div>
+
+        <!-- Date Stamp -->
+        <div class="date-stamp date-stamp-bottom-right" id="dateStamp">November 1918</div>
+
+        <!-- Atmosphere -->
+        <div class="light-leak orange" id="lightLeakOrange"></div>
+        <div class="light-leak white"  id="lightLeakWhite"></div>
+        <div class="light-leak amber"  id="lightLeakAmber"></div>
+        <div class="scanlines-overlay"></div>
+        <canvas id="dust-motes-canvas"></canvas>
+        <div class="letterbox-top cinematic"  id="letterboxTop"></div>
+        <div class="letterbox-bottom cinematic" id="letterboxBottom"></div>
+        <div class="vignette pulse"></div>
+        <canvas id="film-grain-canvas"></canvas>
+
+        <!-- End / Replay state -->
+        <div class="end-state" id="endState">
+            <div class="end-film-scratch"></div>
+            <div class="end-text-container">
+                <p class="end-main-text">The Wound · 1918–1919</p>
+                <p class="end-quote-text">"We are defeated. But not with honor."</p>
+                <p class="end-attribution">— Anonymous Veteran, 1918</p>
+            </div>
+            <div class="end-enter-hint" id="endEnterHint">Click to replay this movement</div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════ ENTER SCREEN ═══════════════ -->
+    <div class="enter-symphony-wrapper" id="enterWrapper">
+        <div class="enter-symphony-inner">
+            <span class="enter-symphony-ornament">✦ &nbsp; A German Perspective &nbsp; ✦</span>
+            <span class="intro-movement-label">Movement I of IV</span>
+            <button class="enter-symphony-btn" id="enterBtn">The Wound</button>
+            <span class="enter-symphony-subtitle">1918 — The armistice cuts deeper than the bayonet.</span>
+            <span class="enter-symphony-era">1918–1928 · The Symphony of Ruin</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════ MOVEMENT NAVIGATION ═══════════════ -->
+    <nav class="intro-nav" id="movementNav" aria-label="Introduction movement navigation">
+        <a href="../index.html" class="intro-nav-link">← Full Introduction</a>
+        <div class="intro-nav-center">
+            <a href="./movement-1.html" class="intro-nav-num active" aria-current="page">I</a>
+            <a href="./movement-2.html" class="intro-nav-num">II</a>
+            <a href="./movement-3.html" class="intro-nav-num">III</a>
+            <a href="./movement-4.html" class="intro-nav-num">IV</a>
+        </div>
+        <a href="./movement-2.html" class="intro-nav-link">The Birth →</a>
+    </nav>
+
+    <!-- ═══════════════ AUDIO ═══════════════ -->
+    <audio id="chapterMusic" preload="auto" src="../assets/audios/music-layer1-cello-drone.mp3" loop></audio>
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* ── Timeline (seconds) for this movement ── */
+        const T = {
+            videoFadeIn:     1.0,
+            ironCrossIn:     1.5,
+            ironCrossOut:   14.0,
+            starvingChildIn:14.0,
+            quoteIn:         6.0,
+            commentaryIn:    3.0,
+            inflationIn:     5.0,
+            inflationOut:   30.0,
+            dateStampIn:     1.0,
+            chapterEnd:     34.0,
+        };
+
+        /* ── DOM refs ── */
+        const $ = id => document.getElementById(id);
+        const container      = $('symphonyContainer');
+        const enterWrapper   = $('enterWrapper');
+        const enterBtn       = $('enterBtn');
+        const videoLayer     = $('videoLayer');
+        const video          = $('chapterVideo');
+        const overlayIron    = $('overlayIronCross');
+        const overlayChild   = $('overlayStarvingChild');
+        const quote          = $('chapterQuote');
+        const commentary     = $('historicalCommentary');
+        const commentaryText = $('commentaryText');
+        const commentaryCursor = $('commentaryCursor');
+        const inflation      = $('inflationCounter');
+        const inflationVal   = $('inflationValue');
+        const dateStamp      = $('dateStamp');
+        const endState       = $('endState');
+        const endHint        = $('endEnterHint');
+        const grainCanvas    = $('film-grain-canvas');
+        const dustCanvas     = $('dust-motes-canvas');
+        const bgCanvas       = $('procedural-bg-canvas');
+        const letterboxTop   = $('letterboxTop');
+        const letterboxBot   = $('letterboxBottom');
+        const lightOrange    = $('lightLeakOrange');
+        const lightWhite     = $('lightLeakWhite');
+        const lightAmber     = $('lightLeakAmber');
+        const music          = $('chapterMusic');
+
+        /* ── State ── */
+        let started = false, paused = false, ended = false;
+        let startTime = 0, pausedAt = 0, totalPauseDuration = 0, pauseStartTime = 0;
+        let frameId = null, grainId = null, dustId = null, bgId = null;
+        let inflationId = null, inflationLastFrame = -1;
+        let typingTimer = null;
+        let dustParticles = [];
+        const grainCtx = grainCanvas.getContext('2d');
+        const dustCtx  = dustCanvas.getContext('2d');
+        const bgCtx    = bgCanvas.getContext('2d');
+        let bgHue = 0;
+
+        function getElapsed() {
+            if (!started || paused) return pausedAt;
+            return (performance.now() - startTime - totalPauseDuration) / 1000;
+        }
+
+        /* ── Canvas helpers ── */
+        function resizeCanvases() {
+            [grainCanvas, dustCanvas, bgCanvas].forEach(c => {
+                c.width = window.innerWidth; c.height = window.innerHeight;
+            });
+        }
+        function animateGrain() {
+            const w = grainCanvas.width, h = grainCanvas.height;
+            const img = grainCtx.createImageData(w, h);
+            for (let i = 0; i < img.data.length; i += 4) {
+                const n = Math.floor(Math.random() * 35);
+                img.data[i] = img.data[i+1] = img.data[i+2] = n;
+                img.data[i+3] = Math.floor(Math.random() * 25);
+            }
+            grainCtx.putImageData(img, 0, 0);
+            grainId = requestAnimationFrame(animateGrain);
+        }
+        function initDust() {
+            dustParticles = Array.from({ length: 12 }, () => ({
+                x: Math.random() * dustCanvas.width, y: Math.random() * dustCanvas.height,
+                r: 0.4 + Math.random() * 1.2,
+                sx: (Math.random() - 0.5) * 0.3, sy: (Math.random() - 0.5) * 0.2 - 0.12,
+                op: 0.14 + Math.random() * 0.28,
+                ts: 0.004 + Math.random() * 0.014, to: Math.random() * Math.PI * 2,
+            }));
+        }
+        function animateDust() {
+            const w = dustCanvas.width, h = dustCanvas.height;
+            dustCtx.clearRect(0, 0, w, h);
+            dustParticles.forEach(p => {
+                p.x += p.sx; p.y += p.sy;
+                if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
+                if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
+                const tw = 0.5 + 0.5 * Math.sin(performance.now() * p.ts + p.to);
+                const a  = p.op * tw;
+                dustCtx.beginPath(); dustCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                dustCtx.fillStyle = `rgba(255,240,220,${a})`; dustCtx.fill();
+            });
+            dustId = requestAnimationFrame(animateDust);
+        }
+        function animateBg() {
+            const w = bgCanvas.width, h = bgCanvas.height;
+            const t = performance.now() * 0.001;
+            bgHue = (bgHue + 0.015) % 360;
+            const g = bgCtx.createRadialGradient(w*0.35, h*0.4, w*0.05, w*0.5, h*0.5, w*0.9);
+            const hs = Math.sin(t * 0.3) * 15;
+            g.addColorStop(0, `hsl(${20+hs},15%,6%)`);
+            g.addColorStop(0.5, `hsl(${15+hs},10%,3%)`);
+            g.addColorStop(1, '#000');
+            bgCtx.fillStyle = g; bgCtx.fillRect(0, 0, w, h);
+            bgId = requestAnimationFrame(animateBg);
+        }
+
+        /* ── Commentary typewriter ── */
+        function typeText(text, date) {
+            clearTyping();
+            let i = 0;
+            commentary.classList.add('visible');
+            commentaryCursor.style.display = 'inline-block';
+            commentaryText.innerHTML = `<span class="commentary-date">[${date}]</span> `;
+            typingTimer = setInterval(() => {
+                if (paused) return;
+                commentaryText.innerHTML = `<span class="commentary-date">[${date}]</span> ` + text.slice(0, ++i);
+                if (i >= text.length) { clearInterval(typingTimer); typingTimer = null; }
+            }, 28);
+        }
+        function clearTyping() {
+            if (typingTimer) { clearInterval(typingTimer); typingTimer = null; }
+            commentaryText.textContent = ''; commentaryCursor.style.display = 'none';
+        }
+
+        /* ── Inflation counter ── */
+        const INF_START = 4.2, INF_END = 4200000000000;
+        function animateInflation() {
+            if (paused) { inflationId = null; return; }
+            const elapsed = getElapsed();
+            const raw = Math.max(0, Math.min(1, (elapsed - T.inflationIn) / (T.inflationOut - T.inflationIn)));
+            const frame = Math.floor(Math.pow(raw, 2.3) * 220);
+            if (frame !== inflationLastFrame) {
+                inflationLastFrame = frame;
+                const vp  = Math.pow(Math.min(1, frame / 220), 5.2);
+                const val = INF_START + (INF_END - INF_START) * vp;
+                let txt;
+                if      (val >= 1e12) txt = (val/1e12).toFixed(1) + ' trillion Mark';
+                else if (val >= 1e9)  txt = (val/1e9).toFixed(1)  + ' billion Mark';
+                else if (val >= 1e6)  txt = (val/1e6).toFixed(1)  + ' million Mark';
+                else if (val >= 1000) txt = Math.round(val).toLocaleString() + ' Mark';
+                else                  txt = val.toFixed(2) + ' Mark';
+                inflationVal.textContent = txt;
+            }
+            if (raw > 0.92) inflation.classList.add('bloody-active');
+            else            inflation.classList.remove('bloody-active');
+            inflationId = requestAnimationFrame(animateInflation);
+        }
+
+        /* ── Light leaks ── */
+        function triggerLeak() {
+            const l = [lightOrange, lightWhite, lightAmber][Math.floor(Math.random() * 3)];
+            l.classList.add('flash');
+            setTimeout(() => l.classList.remove('flash'), 90 + Math.random() * 160);
+        }
+        function scheduleLeak() {
+            if (!started || paused || ended) return;
+            setTimeout(() => { triggerLeak(); scheduleLeak(); }, 7000 + Math.random() * 16000);
+        }
+
+        /* ── Main loop ── */
+        let commentaryTyped = false;
+        function loop() {
+            if (paused || ended) return;
+            const e = getElapsed();
+
+            if (e >= T.videoFadeIn)    videoLayer.classList.add('active');
+            if (e >= T.ironCrossIn && e < T.ironCrossOut)  overlayIron.classList.add('visible');
+            else                                           overlayIron.classList.remove('visible');
+            if (e >= T.starvingChildIn) overlayChild.classList.add('visible');
+            if (e >= T.quoteIn)         quote.classList.add('visible');
+            if (e >= T.dateStampIn)     dateStamp.classList.add('visible');
+            if (e >= T.inflationIn && e < T.inflationOut) {
+                inflation.classList.add('visible');
+                if (!inflationId) animateInflation();
+            } else if (e >= T.inflationOut) {
+                inflation.classList.remove('visible');
+                if (inflationId) { cancelAnimationFrame(inflationId); inflationId = null; }
+            }
+            if (e >= T.commentaryIn && !commentaryTyped) {
+                commentaryTyped = true;
+                typeText('November 1918: World War I ends. The Kaiser abdicates, the republic is proclaimed, and the peace terms leave Germany shaken and unstable.', '1918–1919');
+            }
+            if (e >= T.chapterEnd - 2) { videoLayer.classList.add('fading'); }
+            if (e >= T.chapterEnd && !ended) { triggerEnd(); return; }
+            frameId = requestAnimationFrame(loop);
+        }
+
+        function triggerEnd() {
+            ended = true;
+            clearTyping(); commentary.classList.remove('visible');
+            video.pause();
+            if (music) { music.pause(); }
+            endState.classList.add('visible');
+        }
+
+        /* ── Start ── */
+        function start() {
+            if (started) return;
+            started = true; startTime = performance.now(); totalPauseDuration = 0;
+            enterWrapper.classList.add('hidden');
+            video.muted = false; video.volume = 0.7;
+            video.currentTime = 0; video.play().catch(() => {});
+            if (music) { music.volume = 0.3; music.play().catch(() => {}); }
+            scheduleLeak();
+            loop();
+        }
+
+        /* ── Replay ── */
+        function replay() {
+            ended = false; commentaryTyped = false; inflationLastFrame = -1;
+            endState.classList.remove('visible');
+            videoLayer.classList.remove('fading', 'active');
+            [overlayIron, overlayChild, quote, inflation, dateStamp].forEach(el => el.classList.remove('visible', 'bloody-active'));
+            clearTyping(); commentary.classList.remove('visible');
+            startTime = performance.now(); totalPauseDuration = 0; pausedAt = 0;
+            video.currentTime = 0; video.play().catch(() => {});
+            if (music) { music.currentTime = 0; music.play().catch(() => {}); }
+            scheduleLeak();
+            loop();
+        }
+
+        /* ── Init ── */
+        resizeCanvases(); initDust();
+        animateGrain(); animateDust(); animateBg();
+        window.addEventListener('resize', resizeCanvases);
+
+        enterBtn.addEventListener('click', start);
+        enterWrapper.addEventListener('click', e => {
+            if (e.target === enterWrapper || e.target.closest('.enter-symphony-inner')) start();
+        });
+        document.addEventListener('keydown', e => {
+            if (!started) return;
+            if (e.code === 'Space') { e.preventDefault(); if (ended) replay(); }
+        });
+        endHint.addEventListener('click', replay);
+
+    })();
+    </script>
+
+</body>
+</html>

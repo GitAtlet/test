@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>III · The Putsch — Symphony of Ruin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/symphony.css">
+    <style>
+        html, body { cursor: auto; }
+        .intro-nav { opacity: 0; }
+        .intro-nav:hover,
+        .intro-nav:focus-within { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ MOVEMENT CONTAINER ═══════════════ -->
+    <div class="symphony-container" id="symphonyContainer">
+
+        <canvas id="procedural-bg-canvas"></canvas>
+
+        <div class="video-layer" id="videoLayer">
+            <video id="chapterVideo" loop muted playsinline preload="auto"
+                src="../assets/videos/movement3-putsch.mp4"
+                poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25'%3E%3Cstop offset='0%25' stop-color='%23150a05'/%3E%3Cstop offset='100%25' stop-color='%23000000'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23g)' width='1920' height='1080'/%3E%3Ctext x='960' y='540' text-anchor='middle' fill='%23552215' font-family='serif' font-size='24'%3E1923 %C2%B7 The Putsch%3C/text%3E%3C/svg%3E">
+            </video>
+        </div>
+
+        <!-- Image Overlays -->
+        <div class="image-overlay overlay-putsch-medal" id="overlayPutschMedal">
+            <img src="../assets/images/broken-putsch-medal.png" alt="Broken Putsch Medal" loading="eager"
+                onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'50\' cy=\'50\' r=\'42\' fill=\'none\' stroke=\'%23774433\' stroke-width=\'2.5\' stroke-dasharray=\'10,5\'/><circle cx=\'50\' cy=\'50\' r=\'30\' fill=\'%233a1a10\' opacity=\'0.7\'/><text x=\'50\' y=\'55\' text-anchor=\'middle\' fill=\'%23aa6644\' font-size=\'14\' font-family=\'serif\' font-weight=\'bold\'>✕</text><line x1=\'20\' y1=\'20\' x2=\'80\' y2=\'80\' stroke=\'%23774433\' stroke-width=\'1.5\'/><text x=\'50\' y=\'90\' text-anchor=\'middle\' fill=\'%23886644\' font-size=\'6\' font-family=\'sans-serif\'>PUTSCH 1923</text></svg></div>'">
+        </div>
+
+        <!-- Quote -->
+        <div class="quote-overlay quote-m3" id="chapterQuote">
+            <span class="quote-german">"Sie können uns <span class="bloody">richten</span>. Wir werden uns vor der Geschichte rechtfertigen."</span>
+            <span class="quote-english">"You may <span class="bloody">judge</span> us. History will justify us."</span>
+            <span class="quote-attribution">— Adolf Hitler, Trial 1924</span>
+        </div>
+
+        <!-- Historical Commentary -->
+        <div class="historical-commentary" id="historicalCommentary">
+            <span class="commentary-text" id="commentaryText"></span><span class="cursor-blink" id="commentaryCursor"></span>
+        </div>
+
+        <!-- Date Stamp -->
+        <div class="date-stamp date-stamp-bottom-right" id="dateStamp">November 1923</div>
+
+        <!-- Atmosphere -->
+        <div class="light-leak orange" id="lightLeakOrange"></div>
+        <div class="light-leak white"  id="lightLeakWhite"></div>
+        <div class="light-leak amber"  id="lightLeakAmber"></div>
+        <div class="scanlines-overlay"></div>
+        <canvas id="dust-motes-canvas"></canvas>
+        <div class="letterbox-top cinematic"   id="letterboxTop"></div>
+        <div class="letterbox-bottom cinematic" id="letterboxBottom"></div>
+        <div class="vignette pulse"></div>
+        <canvas id="film-grain-canvas"></canvas>
+
+        <!-- End / Replay state -->
+        <div class="end-state" id="endState">
+            <div class="end-film-scratch"></div>
+            <div class="end-text-container">
+                <p class="end-main-text">The Putsch · November 1923</p>
+                <p class="end-quote-text">"You may judge us. History will justify us."</p>
+                <p class="end-attribution">— Adolf Hitler, Trial 1924</p>
+            </div>
+            <div class="end-enter-hint" id="endEnterHint">Click to replay this movement</div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════ ENTER SCREEN ═══════════════ -->
+    <div class="enter-symphony-wrapper" id="enterWrapper">
+        <div class="enter-symphony-inner">
+            <span class="enter-symphony-ornament">✦ &nbsp; A German Perspective &nbsp; ✦</span>
+            <span class="intro-movement-label">Movement III of IV</span>
+            <button class="enter-symphony-btn" id="enterBtn">The Putsch</button>
+            <span class="enter-symphony-subtitle">1923 — Failure as foundation.</span>
+            <span class="enter-symphony-era">1918–1928 · The Symphony of Ruin</span>
+        </div>
+    </div>
+
+    <!-- ═══════════════ MOVEMENT NAVIGATION ═══════════════ -->
+    <nav class="intro-nav" id="movementNav" aria-label="Introduction movement navigation">
+        <a href="./movement-2.html" class="intro-nav-link">← The Birth</a>
+        <div class="intro-nav-center">
+            <a href="./movement-1.html" class="intro-nav-num">I</a>
+            <a href="./movement-2.html" class="intro-nav-num">II</a>
+            <a href="./movement-3.html" class="intro-nav-num active" aria-current="page">III</a>
+            <a href="./movement-4.html" class="intro-nav-num">IV</a>
+        </div>
+        <a href="./movement-4.html" class="intro-nav-link">The Wait →</a>
+    </nav>
+
+    <!-- ═══════════════ AUDIO ═══════════════ -->
+    <audio id="chapterMusic" preload="auto" src="../assets/audios/music-layer3-piano-organ.mp3" loop></audio>
+
+    <script>
+    (function () {
+        'use strict';
+
+        const T = {
+            videoFadeIn:   1.0,
+            medalIn:       3.0,
+            medalOut:     26.0,
+            quoteIn:       9.0,
+            commentaryIn:  2.0,
+            dateStampIn:   1.0,
+            chromaticAt:  14.0,
+            chapterEnd:   34.0,
+        };
+
+        const $ = id => document.getElementById(id);
+        const enterWrapper    = $('enterWrapper');
+        const enterBtn        = $('enterBtn');
+        const videoLayer      = $('videoLayer');
+        const video           = $('chapterVideo');
+        const overlayMedal    = $('overlayPutschMedal');
+        const quote           = $('chapterQuote');
+        const commentary      = $('historicalCommentary');
+        const commentaryText  = $('commentaryText');
+        const commentaryCursor= $('commentaryCursor');
+        const dateStamp       = $('dateStamp');
+        const endState        = $('endState');
+        const endHint         = $('endEnterHint');
+        const grainCanvas     = $('film-grain-canvas');
+        const dustCanvas      = $('dust-motes-canvas');
+        const bgCanvas        = $('procedural-bg-canvas');
+        const lightOrange     = $('lightLeakOrange');
+        const lightWhite      = $('lightLeakWhite');
+        const lightAmber      = $('lightLeakAmber');
+        const music           = $('chapterMusic');
+
+        let started = false, paused = false, ended = false;
+        let startTime = 0, pausedAt = 0, totalPauseDuration = 0;
+        let frameId = null, grainId = null, dustId = null, bgId = null;
+        let typingTimer = null, commentaryTyped = false, chromaticDone = false;
+        let dustParticles = [];
+        const grainCtx = grainCanvas.getContext('2d');
+        const dustCtx  = dustCanvas.getContext('2d');
+        const bgCtx    = bgCanvas.getContext('2d');
+
+        function getElapsed() {
+            if (!started || paused) return pausedAt;
+            return (performance.now() - startTime - totalPauseDuration) / 1000;
+        }
+
+        function resizeCanvases() {
+            [grainCanvas, dustCanvas, bgCanvas].forEach(c => {
+                c.width = window.innerWidth; c.height = window.innerHeight;
+            });
+        }
+        function animateGrain() {
+            const w = grainCanvas.width, h = grainCanvas.height;
+            const img = grainCtx.createImageData(w, h);
+            for (let i = 0; i < img.data.length; i += 4) {
+                const n = Math.floor(Math.random() * 35);
+                img.data[i] = img.data[i+1] = img.data[i+2] = n;
+                img.data[i+3] = Math.floor(Math.random() * 25);
+            }
+            grainCtx.putImageData(img, 0, 0);
+            grainId = requestAnimationFrame(animateGrain);
+        }
+        function initDust() {
+            dustParticles = Array.from({ length: 12 }, () => ({
+                x: Math.random() * dustCanvas.width, y: Math.random() * dustCanvas.height,
+                r: 0.4 + Math.random() * 1.2,
+                sx: (Math.random() - 0.5) * 0.3, sy: (Math.random() - 0.5) * 0.2 - 0.12,
+                op: 0.14 + Math.random() * 0.28,
+                ts: 0.004 + Math.random() * 0.014, to: Math.random() * Math.PI * 2,
+            }));
+        }
+        function animateDust() {
+            const w = dustCanvas.width, h = dustCanvas.height;
+            dustCtx.clearRect(0, 0, w, h);
+            dustParticles.forEach(p => {
+                p.x += p.sx; p.y += p.sy;
+                if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
+                if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
+                const tw = 0.5 + 0.5 * Math.sin(performance.now() * p.ts + p.to);
+                const a  = p.op * tw;
+                dustCtx.beginPath(); dustCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                dustCtx.fillStyle = `rgba(255,240,220,${a})`; dustCtx.fill();
+            });
+            dustId = requestAnimationFrame(animateDust);
+        }
+        function animateBg() {
+            const w = bgCanvas.width, h = bgCanvas.height;
+            const t = performance.now() * 0.001;
+            const g = bgCtx.createRadialGradient(w*0.5, h*0.5, w*0.05, w*0.5, h*0.5, w*0.9);
+            const hs = Math.sin(t * 0.35) * 18;
+            g.addColorStop(0, `hsl(${10+hs},18%,6.5%)`);
+            g.addColorStop(0.5, `hsl(${5+hs},12%,3%)`);
+            g.addColorStop(1, '#000');
+            bgCtx.fillStyle = g; bgCtx.fillRect(0, 0, w, h);
+            bgId = requestAnimationFrame(animateBg);
+        }
+
+        function typeText(text, date) {
+            clearTyping();
+            let i = 0;
+            commentary.classList.add('visible');
+            commentaryCursor.style.display = 'inline-block';
+            commentaryText.innerHTML = `<span class="commentary-date">[${date}]</span> `;
+            typingTimer = setInterval(() => {
+                if (paused) return;
+                commentaryText.innerHTML = `<span class="commentary-date">[${date}]</span> ` + text.slice(0, ++i);
+                if (i >= text.length) { clearInterval(typingTimer); typingTimer = null; }
+            }, 28);
+        }
+        function clearTyping() {
+            if (typingTimer) { clearInterval(typingTimer); typingTimer = null; }
+            commentaryText.textContent = ''; commentaryCursor.style.display = 'none';
+        }
+
+        function triggerLeak() {
+            const l = [lightOrange, lightWhite, lightAmber][Math.floor(Math.random() * 3)];
+            l.classList.add('flash');
+            setTimeout(() => l.classList.remove('flash'), 90 + Math.random() * 160);
+        }
+        function scheduleLeak() {
+            if (!started || ended) return;
+            setTimeout(() => { triggerLeak(); scheduleLeak(); }, 7000 + Math.random() * 16000);
+        }
+
+        function loop() {
+            if (paused || ended) return;
+            const e = getElapsed();
+            if (e >= T.videoFadeIn) videoLayer.classList.add('active');
+            if (e >= T.medalIn && e < T.medalOut)  overlayMedal.classList.add('visible');
+            else                                   overlayMedal.classList.remove('visible');
+            if (e >= T.quoteIn)    quote.classList.add('visible');
+            if (e >= T.dateStampIn) dateStamp.classList.add('visible');
+            if (e >= T.commentaryIn && !commentaryTyped) {
+                commentaryTyped = true;
+                typeText('November 1923: Hyperinflation peaks at 4.2 trillion Mark per US Dollar. The Munich putsch fails, Hitler is jailed, and the trial gives him national attention.', '1923–1924');
+            }
+            /* brief chromatic glitch at midpoint */
+            if (e >= T.chromaticAt && e < T.chromaticAt + 3 && !chromaticDone) {
+                chromaticDone = true;
+                videoLayer.classList.add('chromatic');
+                setTimeout(() => videoLayer.classList.remove('chromatic'), 350);
+            }
+            if (e >= T.chapterEnd - 2) videoLayer.classList.add('fading');
+            if (e >= T.chapterEnd && !ended) { triggerEnd(); return; }
+            frameId = requestAnimationFrame(loop);
+        }
+
+        function triggerEnd() {
+            ended = true;
+            clearTyping(); commentary.classList.remove('visible');
+            video.pause(); if (music) music.pause();
+            endState.classList.add('visible');
+        }
+
+        function start() {
+            if (started) return;
+            started = true; startTime = performance.now(); totalPauseDuration = 0;
+            enterWrapper.classList.add('hidden');
+            video.muted = false; video.volume = 0.7;
+            video.currentTime = 0; video.play().catch(() => {});
+            if (music) { music.volume = 0.3; music.play().catch(() => {}); }
+            scheduleLeak(); loop();
+        }
+
+        function replay() {
+            ended = false; commentaryTyped = false; chromaticDone = false;
+            endState.classList.remove('visible');
+            videoLayer.classList.remove('fading', 'active', 'chromatic');
+            [overlayMedal, quote, dateStamp].forEach(el => el.classList.remove('visible'));
+            clearTyping(); commentary.classList.remove('visible');
+            startTime = performance.now(); totalPauseDuration = 0; pausedAt = 0;
+            video.currentTime = 0; video.play().catch(() => {});
+            if (music) { music.currentTime = 0; music.play().catch(() => {}); }
+            scheduleLeak(); loop();
+        }
+
+        resizeCanvases(); initDust();
+        animateGrain(); animateDust(); animateBg();
+        window.addEventListener('resize', resizeCanvases);
+        enterBtn.addEventListener('click', start);
+        enterWrapper.addEventListener('click', e => {
+            if (e.target === enterWrapper || e.target.closest('.enter-symphony-inner')) start();
+        });
+        document.addEventListener('keydown', e => {
+            if (!started) return;
+            if (e.code === 'Space') { e.preventDefault(); if (ended) replay(); }
+        });
+        endHint.addEventListener('click', replay);
+
+    })();
+    </script>
+
+</body>
+</html>
