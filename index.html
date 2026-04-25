@@ -656,34 +656,6 @@
             left: 4%;
         }
 
-        /* ── BACKGROUND SWASTIKA ── */
-        .swastika-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(220px, 44vmin, 540px);
-            height: clamp(220px, 44vmin, 540px);
-            opacity: 0.17;
-            pointer-events: none;
-            z-index: 3;
-            mix-blend-mode: screen;
-            animation: swastikaBreathe 7s ease-in-out infinite;
-        }
-        .swastika-bg svg path {
-            fill: #ffffff;
-        }
-        @keyframes swastikaBreathe {
-            0%, 100% {
-                opacity: 0.14;
-                filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.12));
-            }
-            50% {
-                opacity: 0.22;
-                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.45)) drop-shadow(0 0 50px rgba(255, 255, 255, 0.20));
-            }
-        }
-
         /* ── FILM GRAIN ── */
         #film-grain-canvas {
             position: fixed;
@@ -867,23 +839,6 @@
         .end-state.visible {
             opacity: 1;
             pointer-events: auto;
-        }
-        .end-swastika-ghost {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 30vw;
-            max-width: 350px;
-            height: 30vw;
-            max-height: 350px;
-            opacity: 0;
-            transition: opacity 4s var(--transition-smooth);
-            z-index: 1;
-            filter: blur(2px);
-        }
-        .end-swastika-ghost svg path {
-            fill: #ffffff;
         }
         .end-film-scratch {
             position: absolute;
@@ -1236,19 +1191,6 @@
 <div class="light-leak white" id="lightLeakWhite"></div>
 <div class="light-leak amber" id="lightLeakAmber"></div>
 
-<!-- ── Background Swastika ── -->
-<div class="swastika-bg" id="swastikaBg">
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <g transform="rotate(45, 100, 100)">
-            <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
-            M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
-            M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
-            M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
-            fill="#ffffff"/>
-        </g>
-    </svg>
-</div>
-
 <!-- ── Scanlines ── -->
 <div class="scanlines-overlay"></div>
 
@@ -1271,17 +1213,6 @@
 <!-- ── End State ── -->
 <div class="end-state" id="endState">
     <div class="end-film-scratch"></div>
-    <div class="end-swastika-ghost" id="endSwastikaGhost">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <g transform="rotate(45, 100, 100)">
-                <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
-                M185 100 L185 140 L145 140 L145 175 L105 175 L105 140 L185 140 Z
-                M100 185 L100 145 L60 145 L60 105 L25 105 L25 145 L65 145 L65 185 Z
-                M15 100 L15 60 L55 60 L55 25 L95 25 L95 60 L15 60 Z"
-                fill="#ffffff"/>
-            </g>
-        </svg>
-    </div>
     <div class="end-text-container" id="endTextContainer">
         <p class="end-main-text">1929. The world economy trembles.<br>The small party waits.</p>
         <p class="end-quote-text">"It was not the fault of the German people —<br>it was the fault of circumstances."</p>
@@ -1319,7 +1250,6 @@
                 this.enterBtn = document.getElementById('enterSymphonyBtn');
                 this.pauseIndicator = document.getElementById('pauseIndicator');
                 this.endState = document.getElementById('endState');
-                this.endSwastikaGhost = document.getElementById('endSwastikaGhost');
                 this.endTextContainer = document.getElementById('endTextContainer');
                 this.endEnterHint = document.getElementById('endEnterHint');
                 this.grainCanvas = document.getElementById('film-grain-canvas');
@@ -2236,8 +2166,6 @@
                         g.gain.linearRampToValueAtTime(0, now + 0.3); } });
                 this.endState.classList.add('visible');
                 this.proceduralCanvas.style.opacity = '0.25';
-                setTimeout(() => { this.endSwastikaGhost.style.opacity = '0.025'; }, 1500);
-                setTimeout(() => { this.endSwastikaGhost.style.opacity = '0'; }, 6000);
                 setTimeout(() => { this.letterboxTop.classList.remove('full-black');
                     this.letterboxBottom.classList.remove('full-black'); }, 3000);
                 if (this.animationFrameId) { cancelAnimationFrame(this.animationFrameId);
