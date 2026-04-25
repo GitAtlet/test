@@ -656,89 +656,32 @@
             left: 4%;
         }
 
-        /* ── UNIFIED SWASTIKA ── */
-        .swastika-light-pulse {
+        /* ── BACKGROUND SWASTIKA ── */
+        .swastika-bg {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 90vmin;
-            height: 90vmin;
-            border-radius: 50%;
-            background: radial-gradient(ellipse at center,
-                rgba(255, 255, 255, 0.55) 0%,
-                rgba(255, 60, 0, 0.35) 22%,
-                rgba(180, 0, 0, 0.18) 48%,
-                transparent 70%);
+            transform: translate(-50%, -50%);
+            width: clamp(220px, 44vmin, 540px);
+            height: clamp(220px, 44vmin, 540px);
+            opacity: 0.17;
             pointer-events: none;
             z-index: 3;
-            opacity: 0;
             mix-blend-mode: screen;
-            will-change: opacity, transform;
+            animation: swastikaBreathe 7s ease-in-out infinite;
         }
-        .swastika-unified {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.25) rotate(-90deg);
-            width: clamp(180px, 28vmin, 360px);
-            height: clamp(180px, 28vmin, 360px);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 4;
-            will-change: opacity, transform, filter;
-        }
-        .swastika-unified svg path {
+        .swastika-bg svg path {
             fill: #ffffff;
         }
-        @keyframes swastikaAssemble {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.25) rotate(-90deg);
-                filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.2));
-            }
-            55% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.08) rotate(4deg);
-                filter: drop-shadow(0 0 40px rgba(255, 30, 0, 0.9)) drop-shadow(0 0 90px rgba(255, 80, 0, 0.6));
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                filter: drop-shadow(0 0 28px rgba(255, 0, 0, 1)) drop-shadow(0 0 70px rgba(255, 50, 0, 0.75)) drop-shadow(0 0 140px rgba(200, 20, 0, 0.45));
-            }
-        }
-        @keyframes swastikaGlowPulse {
-            0% {
-                filter: drop-shadow(0 0 22px rgba(255, 0, 0, 0.95)) drop-shadow(0 0 65px rgba(255, 40, 0, 0.7)) drop-shadow(0 0 130px rgba(200, 0, 0, 0.4));
-            }
-            100% {
-                filter: drop-shadow(0 0 42px rgba(255, 40, 0, 1)) drop-shadow(0 0 100px rgba(255, 70, 30, 0.85)) drop-shadow(0 0 200px rgba(230, 60, 0, 0.55));
-            }
-        }
-        @keyframes swastikaDissolve {
-            0% {
-                opacity: 1;
-                filter: drop-shadow(0 0 28px rgba(255, 0, 0, 1)) drop-shadow(0 0 70px rgba(255, 50, 0, 0.75));
-                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        @keyframes swastikaBreathe {
+            0%, 100% {
+                opacity: 0.14;
+                filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 30px rgba(255, 255, 255, 0.12));
             }
             50% {
-                filter: drop-shadow(0 0 80px rgba(255, 220, 150, 0.5)) drop-shadow(0 0 160px rgba(255, 160, 60, 0.3));
+                opacity: 0.22;
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.45)) drop-shadow(0 0 50px rgba(255, 255, 255, 0.20));
             }
-            100% {
-                opacity: 0;
-                filter: drop-shadow(0 0 0px rgba(0, 0, 0, 0));
-                transform: translate(-50%, -50%) scale(1.3) rotate(0deg);
-            }
-        }
-        @keyframes lightPulseIn {
-            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-            60%  { opacity: 0.85; transform: translate(-50%, -50%) scale(1.1); }
-            100% { opacity: 0.65; transform: translate(-50%, -50%) scale(1); }
-        }
-        @keyframes lightPulseOut {
-            0%   { opacity: 0.65; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.4); }
         }
 
         /* ── FILM GRAIN ── */
@@ -1293,9 +1236,8 @@
 <div class="light-leak white" id="lightLeakWhite"></div>
 <div class="light-leak amber" id="lightLeakAmber"></div>
 
-<!-- ── Unified Swastika ── -->
-<div class="swastika-light-pulse" id="swastikaLightPulse"></div>
-<div class="swastika-unified" id="swastikaUnified">
+<!-- ── Background Swastika ── -->
+<div class="swastika-bg" id="swastikaBg">
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(45, 100, 100)">
             <path d="M100 15 L100 55 L140 55 L140 95 L175 95 L175 55 L135 55 L135 15 Z
@@ -1429,9 +1371,6 @@
                 this.dateStamp4 = document.getElementById('dateStamp4');
                 this.newsTicker = document.getElementById('newsTicker');
 
-                this.swastikaUnified = document.getElementById('swastikaUnified');
-                this.swastikaLightPulse = document.getElementById('swastikaLightPulse');
-
                 this.barGroup1 = document.getElementById('barGroup1');
                 this.barGroup2 = document.getElementById('barGroup2');
                 this.barGroup3 = document.getElementById('barGroup3');
@@ -1461,8 +1400,6 @@
                 this.dustAnimId = null;
                 this.proceduralAnimId = null;
                 this.lastTapTime = 0;
-                this.unifiedSwastikaShown = false;
-                this.unifiedSwastikaTimers = [];
                 this.endStateReached = false;
                 this.lightLeakTimers = [];
                 this.dustParticles = [];
@@ -1523,7 +1460,6 @@
                     movement4CommentaryOut: 139.0,
                     movement4End: 140.0,
                     newsTickerIn: 98.0,
-                    unifiedSwastika: 136.0,
                     endFreeze: 140.0,
                     endGhostAppear: 142.0,
                     endTextReveal: 144.0,
@@ -2184,7 +2120,6 @@
                         this.fadeVideoAudio(4, 0, 2); }
                 }
 
-                if (elapsed >= t.unifiedSwastika && !this.unifiedSwastikaShown && !this.endStateReached) this.triggerUnifiedSwastika();
                 if (elapsed >= t.endFreeze && !this.endStateReached) this.triggerEndState();
                 if (elapsed >= t.endComplete) { this.finishSymphony(); return; }
                 this.animationFrameId = requestAnimationFrame(() => this.runTimeline());
@@ -2266,46 +2201,8 @@
                 g.gain.linearRampToValueAtTime(tv, st + dur);
             }
 
-            triggerUnifiedSwastika() {
-                if (this.unifiedSwastikaShown) return;
-                this.unifiedSwastikaShown = true;
-                const el = this.swastikaUnified;
-                const lp = this.swastikaLightPulse;
-                if (!el) return;
-                // Force reset before animating
-                el.style.animation = 'none';
-                el.style.opacity = '0';
-                el.style.transform = 'translate(-50%, -50%) scale(0.25) rotate(-90deg)';
-                void el.offsetWidth; // force reflow
-                el.style.animation = 'swastikaAssemble 2.4s cubic-bezier(0.18, 0, 0.08, 1) forwards';
-                if (lp) {
-                    lp.style.animation = 'none';
-                    lp.style.opacity = '0';
-                    void lp.offsetWidth;
-                    lp.style.animation = 'lightPulseIn 2s ease-out forwards';
-                }
-                // After assemble completes, lock transform and start glow pulse
-                const t1 = setTimeout(() => {
-                    if (!el || this.endStateReached) return;
-                    el.style.animation = 'swastikaGlowPulse 1.4s ease-in-out infinite alternate';
-                    el.style.opacity = '1';
-                    el.style.transform = 'translate(-50%, -50%) scale(1) rotate(0deg)';
-                    el.style.filter = 'drop-shadow(0 0 28px rgba(255,0,0,1)) drop-shadow(0 0 70px rgba(255,50,0,0.75)) drop-shadow(0 0 140px rgba(200,20,0,0.45))';
-                }, 2400);
-                this.unifiedSwastikaTimers.push(t1);
-            }
-
             triggerEndState() {
                 this.endStateReached = true;
-                this.unifiedSwastikaTimers.forEach(t => clearTimeout(t));
-                this.unifiedSwastikaTimers = [];
-                // Dissolve unified swastika into end state
-                if (this.swastikaUnified && this.unifiedSwastikaShown) {
-                    this.swastikaUnified.style.animation = 'swastikaDissolve 3s ease-in forwards';
-                }
-                if (this.swastikaLightPulse && this.unifiedSwastikaShown) {
-                    this.swastikaLightPulse.style.animation = 'lightPulseOut 2s ease-in forwards';
-                }
                 this.clearCommentaryTyping();
                 this.historicalCommentary.classList.remove('visible');
                 this.lightLeakTimers.forEach(t => clearTimeout(t));
@@ -2352,7 +2249,6 @@
                 this.isPlaying = false;
             }
             destroy() {
-                this.unifiedSwastikaTimers.forEach(t => clearTimeout(t));
                 this.clearCommentaryTyping();
                 this.lightLeakTimers.forEach(t => clearTimeout(t));
                 if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
