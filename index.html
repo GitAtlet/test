@@ -7,13 +7,15 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --black: #000000;
             --white: #ffffff;
             --crimson: #cc0000;
+            --blood-red: #8b0000;
+            --fresh-blood: #e60000;
             --dark-red-1: #3b0000;
             --dark-red-2: #5b0000;
             --dark-red-3: #7a0000;
@@ -26,6 +28,7 @@
             --font-ui: 'Inter', 'Helvetica Neue', sans-serif;
             --font-mono: 'JetBrains Mono', 'Courier New', monospace;
             --font-display: 'Playfair Display', 'Georgia', serif;
+            --font-typewriter: 'Courier Prime', 'Courier New', monospace;
             --transition-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
             --transition-sharp: cubic-bezier(0.6, 0.0, 0.4, 1);
             --transition-glitch: cubic-bezier(0.85, 0.0, 0.15, 1);
@@ -62,6 +65,17 @@
             overflow: hidden;
         }
 
+        /* ── PROCEDURAL CANVAS BACKGROUND (Video Fallback) ── */
+        #procedural-bg-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            opacity: 1;
+            pointer-events: none;
+            filter: contrast(1.15) brightness(0.65) grayscale(0.4);
+            mix-blend-mode: normal;
+        }
+
         /* ── VIDEO LAYERS ── */
         .video-layer {
             position: absolute;
@@ -90,6 +104,21 @@
             mix-blend-mode: normal;
             display: block;
             background: #000;
+        }
+        .video-layer .video-fallback-poster {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .video-layer .video-fallback-poster svg {
+            width: 100%;
+            height: 100%;
+            opacity: 0.7;
         }
 
         @keyframes chromaticAberration {
@@ -172,7 +201,7 @@
             transition: height 0.8s var(--transition-sharp);
         }
 
-        /* ── LIGHT LEAKS (VERY SUBTLE & BLURRY) ── */
+        /* ── LIGHT LEAKS ── */
         .light-leak {
             position: fixed;
             inset: 0;
@@ -213,12 +242,24 @@
             height: 100%;
             position: relative;
             overflow: hidden;
+            background: #000;
         }
         .split-left video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             filter: grayscale(0.25) contrast(1.15) brightness(0.7);
+            background: #000;
+        }
+        .split-left .video-fallback-poster {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            pointer-events: none;
+            z-index: 0;
         }
         .split-right {
             width: 40%;
@@ -329,8 +370,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(20, 10, 5, 0.8);
-            border: 2px dashed rgba(255, 255, 255, 0.08);
+            background: rgba(30, 18, 10, 0.85);
+            border: 2px dashed rgba(180, 150, 120, 0.15);
+            min-height: 60px;
+        }
+        .image-overlay .fallback-svg svg {
+            width: 90%;
+            height: 90%;
         }
         .overlay-iron-cross {
             top: 12%;
@@ -414,6 +460,29 @@
             font-weight: 400;
             text-transform: uppercase;
         }
+        /* ── BLOODY WORDS IN QUOTES ── */
+        .bloody {
+            color: var(--fresh-blood);
+            text-shadow: 0 0 8px rgba(230, 0, 0, 0.7), 0 0 20px rgba(180, 0, 0, 0.5), 0 0 2px rgba(0, 0, 0, 0.9);
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            animation: bloodyPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes bloodyPulse {
+            0%,
+            100% {
+                color: var(--fresh-blood);
+                text-shadow: 0 0 8px rgba(230, 0, 0, 0.7), 0 0 20px rgba(180, 0, 0, 0.5);
+            }
+            35% {
+                color: #ff1a1a;
+                text-shadow: 0 0 14px rgba(255, 0, 0, 0.9), 0 0 30px rgba(200, 0, 0, 0.7);
+            }
+            70% {
+                color: #cc0000;
+                text-shadow: 0 0 6px rgba(200, 0, 0, 0.5), 0 0 16px rgba(150, 0, 0, 0.4);
+            }
+        }
         .quote-m1 {
             bottom: 18%;
             left: 50%;
@@ -465,6 +534,26 @@
         .inflation-counter.visible {
             opacity: 0.70;
         }
+        .inflation-counter.bloody-active .inflation-value {
+            color: var(--fresh-blood) !important;
+            text-shadow: 0 0 18px rgba(230, 0, 0, 0.8), 0 0 35px rgba(180, 0, 0, 0.6), 0 0 4px rgba(0, 0, 0, 0.9) !important;
+            animation: inflationBloodyPulse 1.8s ease-in-out infinite;
+        }
+        .inflation-counter.bloody-active .inflation-label {
+            color: rgba(255, 80, 60, 0.75) !important;
+        }
+        @keyframes inflationBloodyPulse {
+            0%,
+            100% {
+                text-shadow: 0 0 18px rgba(230, 0, 0, 0.8), 0 0 35px rgba(180, 0, 0, 0.6);
+            }
+            40% {
+                text-shadow: 0 0 28px rgba(255, 30, 30, 1), 0 0 50px rgba(220, 0, 0, 0.9), 0 0 8px rgba(255, 0, 0, 0.5);
+            }
+            75% {
+                text-shadow: 0 0 14px rgba(200, 0, 0, 0.6), 0 0 25px rgba(140, 0, 0, 0.4);
+            }
+        }
         .inflation-counter-top {
             top: 8%;
             left: 5%;
@@ -484,6 +573,58 @@
             display: block;
             font-size: clamp(0.8rem, 1.8vw, 1.3rem);
             font-weight: 500;
+            transition: color 0.8s var(--transition-smooth), text-shadow 0.8s var(--transition-smooth);
+        }
+
+        /* ── HISTORICAL COMMENTARY (TYPEWRITER) ── */
+        .historical-commentary {
+            position: fixed;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 12;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s var(--transition-smooth);
+            font-family: var(--font-typewriter);
+            font-size: clamp(0.55rem, 0.9vw, 0.7rem);
+            letter-spacing: 0.04em;
+            color: rgba(220, 210, 190, 0.75);
+            text-align: center;
+            width: 85%;
+            max-width: 750px;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.7rem 1.2rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            min-height: 2.5rem;
+        }
+        .historical-commentary.visible {
+            opacity: 0.72;
+        }
+        .historical-commentary .cursor-blink {
+            display: inline-block;
+            width: 6px;
+            height: 1em;
+            background: rgba(220, 200, 170, 0.6);
+            margin-left: 2px;
+            animation: cursorBlink 0.7s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        @keyframes cursorBlink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+        .historical-commentary .commentary-date {
+            color: rgba(200, 170, 130, 0.7);
+            font-weight: 700;
+            letter-spacing: 0.1em;
         }
 
         /* ── DATE STAMPS ── */
@@ -515,7 +656,7 @@
             left: 4%;
         }
 
-        /* ── SWASTIKA FRAGMENTS: CLEAR, BROKEN PIECES ── */
+        /* ── SWASTIKA FRAGMENTS ── */
         .swastika-fragment {
             position: absolute;
             z-index: 3;
@@ -552,7 +693,6 @@
             }
         }
 
-        /* Fragment 1: Top-right ~28vw, jagged clip shows top-right portion */
         .fragment-1 {
             top: -6%;
             right: -4%;
@@ -565,8 +705,6 @@
         .fragment-1 svg path {
             fill: var(--dark-red-1);
         }
-
-        /* Fragment 2: Top-right larger ~35vw, different jagged break */
         .fragment-2 {
             top: -8%;
             right: -6%;
@@ -579,8 +717,6 @@
         .fragment-2 svg path {
             fill: var(--dark-red-2);
         }
-
-        /* Fragment 3: Bottom-left ~30vw, jagged break on top-right */
         .fragment-3 {
             bottom: -10%;
             left: -8%;
@@ -593,8 +729,6 @@
         .fragment-3 svg path {
             fill: var(--dark-red-3);
         }
-
-        /* Fragment 4: Top-left ghost ~38vw, very faint grey, jagged */
         .fragment-4 {
             top: -12%;
             left: -10%;
@@ -982,6 +1116,11 @@
             .light-leak {
                 filter: blur(40px);
             }
+            .historical-commentary {
+                bottom: 16%;
+                font-size: 0.5rem;
+                padding: 0.5rem 0.8rem;
+            }
         }
         @media (max-width: 480px) {
             .quote-german {
@@ -1017,12 +1156,20 @@
                 max-width: 160px;
                 max-height: 160px;
             }
+            .historical-commentary {
+                bottom: 18%;
+                font-size: 0.45rem;
+                width: 92%;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="symphony-container" id="symphonyContainer">
+
+        <!-- ── Procedural Background Canvas (Video Fallback) ── -->
+        <canvas id="procedural-bg-canvas"></canvas>
 
         <!-- ── Video Layer: Movement 1 ── -->
         <div class="video-layer" id="videoLayer1" data-movement="1">
@@ -1088,46 +1235,51 @@
 
 <!-- ── Image Overlays ── -->
 <div class="image-overlay overlay-iron-cross" id="overlayIronCross">
-    <img src="assets/images/iron-cross-torn.png" alt="Torn Iron Cross"
-    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><rect x=\'30\' y=\'10\' width=\'40\' height=\'80\' fill=\'%233a2010\' opacity=\'0.6\'/><rect x=\'10\' y=\'30\' width=\'80\' height=\'40\' fill=\'%233a2010\' opacity=\'0.6\'/><line x1=\'50\' y1=\'10\' x2=\'50\' y2=\'90\' stroke=\'%23554433\' stroke-width=\'1\' stroke-dasharray=\'3,5\'/><line x1=\'10\' y1=\'50\' x2=\'90\' y2=\'50\' stroke=\'%23554433\' stroke-width=\'1\' stroke-dasharray=\'3,5\'/></svg></div>'">
+    <img src="assets/images/iron-cross-torn.png" alt="Torn Iron Cross" loading="eager"
+    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><rect x=\'30\' y=\'10\' width=\'40\' height=\'80\' fill=\'%235a3a20\' opacity=\'0.7\' rx=\'2\'/><rect x=\'10\' y=\'30\' width=\'80\' height=\'40\' fill=\'%235a3a20\' opacity=\'0.7\' rx=\'2\'/><line x1=\'50\' y1=\'10\' x2=\'50\' y2=\'90\' stroke=\'%23886644\' stroke-width=\'1.5\' stroke-dasharray=\'4,6\'/><line x1=\'10\' y1=\'50\' x2=\'90\' y2=\'50\' stroke=\'%23886644\' stroke-width=\'1.5\' stroke-dasharray=\'4,6\'/><text x=\'50\' y=\'96\' text-anchor=\'middle\' fill=\'%23997755\' font-size=\'8\' font-family=\'serif\'>EISERNES KREUZ</text></svg></div>'">
 </div>
 <div class="image-overlay overlay-starving-child" id="overlayStarvingChild">
-    <img src="assets/images/starving-child-berlin-1919.jpg" alt="Starving child, Berlin 1919"
-    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\' style=\'aspect-ratio:3/4;\'><svg viewBox=\'0 0 60 80\' xmlns=\'http://www.w3.org/2000/svg\'><rect fill=\'%231a1008\' width=\'60\' height=\'80\' rx=\'2\'/><circle cx=\'30\' cy=\'32\' r=\'14\' fill=\'%232a1a10\' opacity=\'0.7\'/><rect x=\'18\' y=\'48\' width=\'24\' height=\'20\' fill=\'%232a1a10\' opacity=\'0.5\' rx=\'3\'/><text x=\'30\' y=\'72\' text-anchor=\'middle\' fill=\'%23443322\' font-size=\'5\' font-family=\'serif\'>1919</text></svg></div>'">
+    <img src="assets/images/starving-child-berlin-1919.jpg" alt="Starving child, Berlin 1919" loading="eager"
+    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\' style=\'aspect-ratio:3/4;\'><svg viewBox=\'0 0 60 80\' xmlns=\'http://www.w3.org/2000/svg\'><rect fill=\'%231a1008\' width=\'60\' height=\'80\' rx=\'2\'/><circle cx=\'30\' cy=\'30\' r=\'16\' fill=\'%233a2215\' opacity=\'0.8\'/><rect x=\'16\' y=\'48\' width=\'28\' height=\'22\' fill=\'%233a2215\' opacity=\'0.6\' rx=\'4\'/><text x=\'30\' y=\'74\' text-anchor=\'middle\' fill=\'%23775533\' font-size=\'6\' font-family=\'serif\'>BERLIN · 1919</text><text x=\'30\' y=\'20\' text-anchor=\'middle\' fill=\'%23996644\' font-size=\'5\' font-family=\'sans-serif\'>HUNGER</text></svg></div>'">
 </div>
 <div class="image-overlay overlay-putsch-medal" id="overlayPutschMedal">
-    <img src="assets/images/broken-putsch-medal.png" alt="Broken Putsch Medal"
-    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'50\' cy=\'50\' r=\'40\' fill=\'none\' stroke=\'%23553322\' stroke-width=\'2\' stroke-dasharray=\'8,4\'/><circle cx=\'50\' cy=\'50\' r=\'28\' fill=\'%232a1510\' opacity=\'0.6\'/><text x=\'50\' y=\'54\' text-anchor=\'middle\' fill=\'%23886644\' font-size=\'10\' font-family=\'serif\'>✕</text><line x1=\'22\' y1=\'22\' x2=\'78\' y2=\'78\' stroke=\'%23554433\' stroke-width=\'1\'/></svg></div>'">
+    <img src="assets/images/broken-putsch-medal.png" alt="Broken Putsch Medal" loading="eager"
+    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\'><svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><circle cx=\'50\' cy=\'50\' r=\'42\' fill=\'none\' stroke=\'%23774433\' stroke-width=\'2.5\' stroke-dasharray=\'10,5\'/><circle cx=\'50\' cy=\'50\' r=\'30\' fill=\'%233a1a10\' opacity=\'0.7\'/><text x=\'50\' y=\'55\' text-anchor=\'middle\' fill=\'%23aa6644\' font-size=\'14\' font-family=\'serif\' font-weight=\'bold\'>✕</text><line x1=\'20\' y1=\'20\' x2=\'80\' y2=\'80\' stroke=\'%23774433\' stroke-width=\'1.5\'/><text x=\'50\' y=\'90\' text-anchor=\'middle\' fill=\'%23886644\' font-size=\'6\' font-family=\'sans-serif\'>PUTSCH 1923</text></svg></div>'">
 </div>
 <div class="image-overlay overlay-election-poster" id="overlayElectionPoster">
-    <img src="assets/images/election-poster-1928.jpg" alt="NSDAP election poster 1928"
-    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\' style=\'aspect-ratio:2/3;\'><svg viewBox=\'0 0 40 60\' xmlns=\'http://www.w3.org/2000/svg\'><rect fill=\'%231a1510\' width=\'40\' height=\'60\' rx=\'1\'/><rect x=\'5\' y=\'10\' width=\'30\' height=\'25\' fill=\'%232a2018\' opacity=\'0.5\'/><rect x=\'8\' y=\'40\' width=\'24\' height=\'3\' fill=\'%23443322\' opacity=\'0.6\'/><rect x=\'10\' y=\'46\' width=\'20\' height=\'2\' fill=\'%23443322\' opacity=\'0.4\'/><text x=\'20\' y=\'56\' text-anchor=\'middle\' fill=\'%23554433\' font-size=\'3\' font-family=\'sans-serif\'>WAHL 1928</text></svg></div>'">
+    <img src="assets/images/election-poster-1928.jpg" alt="NSDAP election poster 1928" loading="eager"
+    onerror="this.parentElement.innerHTML='<div class=\'fallback-svg\' style=\'aspect-ratio:2/3;\'><svg viewBox=\'0 0 40 60\' xmlns=\'http://www.w3.org/2000/svg\'><rect fill=\'%231a1510\' width=\'40\' height=\'60\' rx=\'2\'/><rect x=\'5\' y=\'10\' width=\'30\' height=\'25\' fill=\'%233a2820\' opacity=\'0.6\' rx=\'1\'/><rect x=\'8\' y=\'40\' width=\'24\' height=\'3\' fill=\'%23664433\' opacity=\'0.7\' rx=\'1\'/><rect x=\'10\' y=\'46\' width=\'20\' height=\'2\' fill=\'%23664433\' opacity=\'0.5\' rx=\'1\'/><text x=\'20\' y=\'56\' text-anchor=\'middle\' fill=\'%23886644\' font-size=\'3.5\' font-family=\'sans-serif\' font-weight=\'bold\'>WAHL 1928</text></svg></div>'">
 </div>
 <div class="image-overlay overlay-map-versailles" id="overlayMapVersailles">
-    <img src="assets/images/versailles-territory-loss.png" alt="Versailles Territory Loss Map"
+    <img src="assets/images/versailles-territory-loss.png" alt="Versailles Territory Loss Map" loading="eager"
     onerror="this.parentElement.style.display='none'">
 </div>
 
-<!-- ── Quote Overlays ── -->
+<!-- ── Quote Overlays (with bloody words) ── -->
 <div class="quote-overlay quote-m1" id="quoteM1">
-    <span class="quote-german">"Wir sind besiegt. Aber nicht ehrenhaft."</span>
-    <span class="quote-english">"We are defeated. But not with honor."</span>
+    <span class="quote-german">"Wir sind <span class="bloody">besiegt</span>. Aber nicht ehrenhaft."</span>
+    <span class="quote-english">"We are <span class="bloody">defeated</span>. But not with honor."</span>
     <span class="quote-attribution">— Anonymer Veteran, 1918</span>
 </div>
 <div class="quote-overlay quote-m2" id="quoteM2">
-    <span class="quote-german">"Was wir brauchen, ist eine Religion der Politik."</span>
-    <span class="quote-english">"What we need is a religion of politics."</span>
+    <span class="quote-german">"Was wir brauchen, ist eine <span class="bloody">Religion der Politik</span>."</span>
+    <span class="quote-english">"What we need is a <span class="bloody">religion of politics</span>."</span>
     <span class="quote-attribution">— Alfred Rosenberg, 1921</span>
 </div>
 <div class="quote-overlay quote-m3" id="quoteM3">
-    <span class="quote-german">"Sie können uns richten. Wir werden uns vor der Geschichte rechtfertigen."</span>
-    <span class="quote-english">"You may judge us. History will justify us."</span>
+    <span class="quote-german">"Sie können uns <span class="bloody">richten</span>. Wir werden uns vor der Geschichte rechtfertigen."</span>
+    <span class="quote-english">"You may <span class="bloody">judge</span> us. History will justify us."</span>
     <span class="quote-attribution">— Adolf Hitler, Prozess 1924</span>
 </div>
 <div class="quote-overlay quote-m4" id="quoteM4">
-    <span class="quote-german">"Wir müssen warten. Das System tötet sich selbst."</span>
-    <span class="quote-english">"We must wait. The system will kill itself."</span>
+    <span class="quote-german">"Wir müssen warten. Das System <span class="bloody">tötet</span> sich selbst."</span>
+    <span class="quote-english">"We must wait. The system will <span class="bloody">kill</span> itself."</span>
     <span class="quote-attribution">— Joseph Goebbels, Tagebuch 1926</span>
+</div>
+
+<!-- ── Historical Commentary (Typewriter) ── -->
+<div class="historical-commentary" id="historicalCommentary">
+    <span class="commentary-text" id="commentaryText"></span><span class="cursor-blink" id="commentaryCursor"></span>
 </div>
 
 <!-- ── Inflation Counter ── -->
@@ -1151,12 +1303,12 @@
     </span>
 </div>
 
-<!-- ── Light Leaks (subtle & blurry) ── -->
+<!-- ── Light Leaks ── -->
 <div class="light-leak orange" id="lightLeakOrange"></div>
 <div class="light-leak white" id="lightLeakWhite"></div>
 <div class="light-leak amber" id="lightLeakAmber"></div>
 
-<!-- ── Swastika Fragments: Clear broken pieces ── -->
+<!-- ── Swastika Fragments ── -->
 <div class="swastika-fragment fragment-1" id="fragment1">
     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(45, 100, 100)">
@@ -1281,11 +1433,18 @@
                 this.grainCtx = this.grainCanvas.getContext('2d');
                 this.dustCanvas = document.getElementById('dust-motes-canvas');
                 this.dustCtx = this.dustCanvas.getContext('2d');
+                this.proceduralCanvas = document.getElementById('procedural-bg-canvas');
+                this.proceduralCtx = this.proceduralCanvas.getContext('2d');
                 this.letterboxTop = document.getElementById('letterboxTop');
                 this.letterboxBottom = document.getElementById('letterboxBottom');
                 this.lightLeakOrange = document.getElementById('lightLeakOrange');
                 this.lightLeakWhite = document.getElementById('lightLeakWhite');
                 this.lightLeakAmber = document.getElementById('lightLeakAmber');
+                this.historicalCommentary = document.getElementById('historicalCommentary');
+                this.commentaryText = document.getElementById('commentaryText');
+                this.commentaryCursor = document.getElementById('commentaryCursor');
+                this.inflationCounter = document.getElementById('inflationCounter');
+                this.inflationValue = document.getElementById('inflationValue');
 
                 this.videoLayers = {
                     1: document.getElementById('videoLayer1'),
@@ -1313,8 +1472,6 @@
                 this.quoteM3 = document.getElementById('quoteM3');
                 this.quoteM4 = document.getElementById('quoteM4');
 
-                this.inflationCounter = document.getElementById('inflationCounter');
-                this.inflationValue = document.getElementById('inflationValue');
                 this.dateStamp1 = document.getElementById('dateStamp1');
                 this.dateStamp2 = document.getElementById('dateStamp2');
                 this.dateStamp3 = document.getElementById('dateStamp3');
@@ -1353,6 +1510,7 @@
                 this.animationFrameId = null;
                 this.grainAnimId = null;
                 this.dustAnimId = null;
+                this.proceduralAnimId = null;
                 this.lastTapTime = 0;
                 this.fragmentFlickerTimers = [];
                 this.fragment4FlickerCount = 0;
@@ -1361,6 +1519,11 @@
                 this.lightLeakTimers = [];
                 this.dustParticles = [];
                 this.inflationAnimationId = null;
+                this.commentaryTimer = null;
+                this.commentaryTypingTimer = null;
+                this.videosLoaded = { 1: false, 2: false, 3: false, 4: false };
+                this.videoErrorCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
+                this.proceduralHue = 0;
 
                 this.timeline = {
                     openingStart: 0,
@@ -1375,6 +1538,8 @@
                     movement1DateStampOut: 30.0,
                     movement1InflationIn: 8.0,
                     movement1InflationOut: 33.0,
+                    movement1CommentaryIn: 6.0,
+                    movement1CommentaryOut: 33.5,
                     movement1End: 34.0,
                     transition1: 35.0,
                     movement2Start: 35.5,
@@ -1382,6 +1547,8 @@
                     movement2QuoteOut: 55.0,
                     movement2DateStampIn: 36.0,
                     movement2DateStampOut: 58.0,
+                    movement2CommentaryIn: 37.0,
+                    movement2CommentaryOut: 59.5,
                     movement2End: 60.0,
                     transition2: 60.5,
                     movement3Start: 61.0,
@@ -1390,6 +1557,8 @@
                     movement3MedalOut: 88.0,
                     movement3DateStampIn: 62.0,
                     movement3DateStampOut: 93.0,
+                    movement3CommentaryIn: 63.0,
+                    movement3CommentaryOut: 94.5,
                     movement3End: 95.0,
                     transition3: 95.5,
                     movement4Start: 96.0,
@@ -1401,6 +1570,8 @@
                     movement4Bar1In: 100.0,
                     movement4Bar2In: 110.0,
                     movement4Bar3In: 120.0,
+                    movement4CommentaryIn: 98.5,
+                    movement4CommentaryOut: 139.0,
                     movement4End: 140.0,
                     newsTickerIn: 98.0,
                     endFreeze: 140.0,
@@ -1409,15 +1580,24 @@
                     endComplete: 152.0,
                 };
 
-                this.inflationData = [
-                    [8, 4.2],
-                    [12, 8.9],
-                    [16, 18],
-                    [20, 48],
-                    [24, 160],
-                    [27, 3500],
-                    [30, 4200000000000],
-                ];
+                this.commentaryData = {
+                    1: {
+                        text: 'November 1918: Der Erste Weltkrieg endet. Kaiser Wilhelm II. dankt ab. Die Weimarer Republik wird ausgerufen — doch sie ist von Anfang an instabil. Der Versailler Vertrag demütigt Deutschland, löst Gebietsverluste aus und legt drückende Reparationszahlungen fest. Hungersnot und politische Unruhen erschüttern die junge Republik.',
+                        date: '1918–1919'
+                    },
+                    2: {
+                        text: 'Februar 1920: In München wird die Deutsche Arbeiterpartei in die NSDAP umbenannt. Adolf Hitler tritt als Redner auf und formuliert das 25-Punkte-Programm — eine Mischung aus Nationalismus, Antisemitismus und Sozialismus. Die Partei bleibt klein, aber ihre Rhetorik findet in der verzweifelten Bevölkerung Widerhall.',
+                        date: '1920–1921'
+                    },
+                    3: {
+                        text: 'November 1923: Die Hyperinflation erreicht ihren Höhepunkt — 4,2 Billionen Mark für einen US-Dollar. Hitler versucht in München einen Putsch, der scheitert. Er wird verhaftet und zu Festungshaft verurteilt. Im Gefängnis diktiert er "Mein Kampf". Die NSDAP wird verboten, doch der Prozess macht Hitler reichsweit bekannt.',
+                        date: '1923–1924'
+                    },
+                    4: {
+                        text: '1924–1928: Die "Goldenen Zwanziger" bringen wirtschaftliche Erholung. Die NSDAP wird wieder zugelassen, erzielt aber bei Wahlen nur magere Ergebnisse. Hitler setzt auf Legalität und reorganisiert die Partei. Im Schatten der Stabilität wächst eine Bewegung, die auf ihre Stunde wartet — die Weltwirtschaftskrise von 1929 wird ihr den Weg ebnen.',
+                        date: '1924–1928'
+                    },
+                };
 
                 this.runTimeline = this.runTimeline.bind(this);
                 this.togglePause = this.togglePause.bind(this);
@@ -1428,9 +1608,14 @@
                 this.initDustCanvas = this.initDustCanvas.bind(this);
                 this.animateDust = this.animateDust.bind(this);
                 this.initDustParticles = this.initDustParticles.bind(this);
+                this.initProceduralCanvas = this.initProceduralCanvas.bind(this);
+                this.animateProceduralBg = this.animateProceduralBg.bind(this);
                 this.scheduleLightLeaks = this.scheduleLightLeaks.bind(this);
                 this.triggerLightLeak = this.triggerLightLeak.bind(this);
                 this.animateInflation = this.animateInflation.bind(this);
+                this.typeCommentary = this.typeCommentary.bind(this);
+                this.clearCommentaryTyping = this.clearCommentaryTyping.bind(this);
+                this.handleVideoError = this.handleVideoError.bind(this);
 
                 this.init();
             }
@@ -1441,6 +1626,29 @@
                 this.initDustCanvas();
                 this.initDustParticles();
                 this.animateDust();
+                this.initProceduralCanvas();
+                this.animateProceduralBg();
+
+                // Setup video error handlers
+                Object.entries(this.videos).forEach(([num, video]) => {
+                    video.addEventListener('error', () => this.handleVideoError(parseInt(num)));
+                    video.addEventListener('loadeddata', () => {
+                        this.videosLoaded[parseInt(num)] = true;
+                        console.log(`Video ${num} loaded successfully`);
+                    });
+                    // Also try to detect if video has no source or failed silently
+                    video.addEventListener('stalled', () => {
+                        if (video.readyState < 2) {
+                            this.handleVideoError(parseInt(num));
+                        }
+                    });
+                });
+                if (this.video4split) {
+                    this.video4split.addEventListener('error', () => {
+                        console.log('Split video error - using fallback');
+                    });
+                }
+
                 this.enterBtn.addEventListener('click', () => this.startSymphony());
                 this.enterWrapper.addEventListener('click', (e) => {
                     if (e.target === this.enterWrapper || e.target.closest('.enter-symphony-inner'))
@@ -1453,7 +1661,82 @@
                 window.addEventListener('resize', () => {
                     this.initGrainCanvas();
                     this.initDustCanvas();
+                    this.initProceduralCanvas();
                 });
+            }
+
+            handleVideoError(movementNum) {
+                this.videoErrorCount[movementNum]++;
+                console.warn(`Video for movement ${movementNum} failed to load (attempt ${this.videoErrorCount[movementNum]}) — using procedural background fallback`);
+                // Make the procedural canvas more prominent for this movement
+                if (this.currentMovement === movementNum || !this.hasStarted) {
+                    this.proceduralCanvas.style.opacity = '1';
+                }
+            }
+
+            initProceduralCanvas() {
+                this.proceduralCanvas.width = window.innerWidth;
+                this.proceduralCanvas.height = window.innerHeight;
+                this.proceduralCanvas.style.opacity = '0.55';
+            }
+
+            animateProceduralBg() {
+                if (!this.proceduralCtx) return;
+                const ctx = this.proceduralCtx;
+                const w = this.proceduralCanvas.width;
+                const h = this.proceduralCanvas.height;
+                const t = performance.now() * 0.001;
+
+                // Slow drift of base hue
+                this.proceduralHue = (this.proceduralHue + 0.015) % 360;
+
+                // Dark ambient base
+                const baseGrad = ctx.createRadialGradient(w * 0.35, h * 0.4, w * 0.05, w * 0.5, h * 0.5, w * 0.9);
+                const hueShift = Math.sin(t * 0.3) * 15;
+                baseGrad.addColorStop(0,
+                    `hsl(${20 + hueShift}, 15%, 6%)`);
+                baseGrad.addColorStop(0.5,
+                    `hsl(${15 + hueShift}, 10%, 3%)`);
+                baseGrad.addColorStop(1, '#000000');
+                ctx.fillStyle = baseGrad;
+                ctx.fillRect(0, 0, w, h);
+
+                // Subtle shifting shadows/blobs
+                for (let i = 0; i < 4; i++) {
+                    const bx = w * (0.2 + Math.sin(t * 0.4 + i * 1.7) * 0.35);
+                    const by = h * (0.3 + Math.cos(t * 0.35 + i * 2.1) * 0.3);
+                    const br = Math.min(w, h) * (0.2 + Math.sin(t * 0.25 + i) * 0.12);
+                    const blobGrad = ctx.createRadialGradient(bx, by, br * 0.2, bx, by, br);
+                    blobGrad.addColorStop(0,
+                        `rgba(40,20,10,${0.08 + Math.sin(t + i) * 0.03})`);
+                    blobGrad.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = blobGrad;
+                    ctx.fillRect(0, 0, w, h);
+                }
+
+                // Very subtle vertical streaks (simulating old film)
+                ctx.globalAlpha = 0.03;
+                for (let x = 0; x < w; x += 8 + Math.floor(Math.random() * 20)) {
+                    const streakHeight = 20 + Math.random() * h * 0.4;
+                    const streakY = Math.random() * h;
+                    ctx.fillStyle = Math.random() < 0.5 ? '#332211' : '#1a1008';
+                    ctx.fillRect(x, streakY, 1.5, streakHeight);
+                }
+                ctx.globalAlpha = 1;
+
+                // Occasional faint flicker patches
+                if (Math.random() < 0.12) {
+                    const fx = Math.random() * w;
+                    const fy = Math.random() * h;
+                    const fr = 80 + Math.random() * 300;
+                    const flickerGrad = ctx.createRadialGradient(fx, fy, 0, fx, fy, fr);
+                    flickerGrad.addColorStop(0, 'rgba(60,35,18,0.06)');
+                    flickerGrad.addColorStop(1, 'rgba(0,0,0,0)');
+                    ctx.fillStyle = flickerGrad;
+                    ctx.fillRect(0, 0, w, h);
+                }
+
+                this.proceduralAnimId = requestAnimationFrame(() => this.animateProceduralBg());
             }
 
             initGrainCanvas() {
@@ -1524,6 +1807,88 @@
                 this.dustAnimId = requestAnimationFrame(() => this.animateDust());
             }
 
+            clearCommentaryTyping() {
+                if (this.commentaryTypingTimer) {
+                    clearInterval(this.commentaryTypingTimer);
+                    this.commentaryTypingTimer = null;
+                }
+                if (this.commentaryTimer) {
+                    clearTimeout(this.commentaryTimer);
+                    this.commentaryTimer = null;
+                }
+                this.commentaryText.textContent = '';
+                this.commentaryCursor.style.display = 'none';
+            }
+
+            typeCommentary(movementNum) {
+                this.clearCommentaryTyping();
+                const data = this.commentaryData[movementNum];
+                if (!data) return;
+                const fullText = data.text;
+                const dateStr = data.date;
+                let charIndex = 0;
+                this.historicalCommentary.classList.add('visible');
+                this.commentaryCursor.style.display = 'inline-block';
+                this.commentaryText.innerHTML = '<span class="commentary-date">[' + dateStr +
+                    ']</span> ';
+
+                const baseDelay = 28;
+                this.commentaryTypingTimer = setInterval(() => {
+                    if (this.isPaused) return;
+                    if (charIndex < fullText.length) {
+                        const char = fullText[charIndex];
+                        // Random variation in typing speed
+                        const extraDelay = (char === '.' || char === ',' || char === ';') ? 120 :
+                            (char === ' ' ? 15 : 0);
+                        this.commentaryText.innerHTML = '<span class="commentary-date">[' +
+                            dateStr + ']</span> ' + fullText.substring(0, charIndex + 1);
+                        charIndex++;
+                        // Adjust interval for punctuation pauses
+                        if (extraDelay > 0 && this.commentaryTypingTimer) {
+                            clearInterval(this.commentaryTypingTimer);
+                            this.commentaryTypingTimer = setTimeout(() => {
+                                if (this.isPaused) return;
+                                this.typeCommentaryContinue(movementNum, charIndex,
+                                    fullText, dateStr);
+                            }, extraDelay);
+                        }
+                    } else {
+                        this.clearCommentaryTyping();
+                        this.commentaryText.innerHTML = '<span class="commentary-date">[' +
+                            dateStr + ']</span> ' + fullText;
+                        this.commentaryCursor.style.display = 'inline-block';
+                    }
+                }, baseDelay);
+            }
+
+            typeCommentaryContinue(movementNum, charIndex, fullText, dateStr) {
+                const baseDelay = 28;
+                this.commentaryTypingTimer = setInterval(() => {
+                    if (this.isPaused) return;
+                    if (charIndex < fullText.length) {
+                        const char = fullText[charIndex];
+                        const extraDelay = (char === '.' || char === ',' || char === ';') ? 120 :
+                            (char === ' ' ? 15 : 0);
+                        this.commentaryText.innerHTML = '<span class="commentary-date">[' +
+                            dateStr + ']</span> ' + fullText.substring(0, charIndex + 1);
+                        charIndex++;
+                        if (extraDelay > 0 && this.commentaryTypingTimer) {
+                            clearInterval(this.commentaryTypingTimer);
+                            this.commentaryTypingTimer = setTimeout(() => {
+                                if (this.isPaused) return;
+                                this.typeCommentaryContinue(movementNum, charIndex,
+                                    fullText, dateStr);
+                            }, extraDelay);
+                        }
+                    } else {
+                        this.clearCommentaryTyping();
+                        this.commentaryText.innerHTML = '<span class="commentary-date">[' +
+                            dateStr + ']</span> ' + fullText;
+                        this.commentaryCursor.style.display = 'inline-block';
+                    }
+                }, baseDelay);
+            }
+
             async startSymphony() {
                 if (this.hasStarted) return;
                 try { this.audioContext = new(window.AudioContext || window.webkitAudioContext)(); } catch (
@@ -1552,6 +1917,7 @@
                 this.scheduleLightLeaks();
                 this.runTimeline();
                 this.scheduleFragment1Flickers();
+                this.proceduralCanvas.style.opacity = '0.55';
             }
 
             setupAudioRouting() {
@@ -1687,14 +2053,46 @@
             animateInflation() {
                 if (this.currentMovement !== 1 || this.isPaused) { this.inflationAnimationId = null; return; }
                 const elapsed = this.getElapsed();
-                const data = this.inflationData;
-                let val = data[0][1];
-                for (let i = data.length - 1; i >= 0; i--) { if (elapsed >= data[i][0]) { val = data[i][1]; break; } }
-                if (val >= 1e12) this.inflationValue.textContent = (val / 1e12).toFixed(1) + ' Billionen Mark';
-                else if (val >= 1e9) this.inflationValue.textContent = (val / 1e9).toFixed(1) + ' Milliarden Mark';
-                else if (val >= 1e6) this.inflationValue.textContent = (val / 1e6).toFixed(1) + ' Millionen Mark';
-                else if (val >= 1000) this.inflationValue.textContent = val.toLocaleString('de-DE') + ' Mark';
-                else this.inflationValue.textContent = val.toFixed(2).replace('.', ',') + ' Mark';
+                const t = this.timeline;
+                const startTime = t.movement1InflationIn;
+                const endTime = t.movement1InflationOut;
+                const duration = endTime - startTime;
+                const rawProgress = Math.max(0, Math.min(1, (elapsed - startTime) / duration));
+
+                // Use a highly skewed power curve for dramatic acceleration
+                // Progress^8 means it stays low for most of the time then explodes
+                const skewedProgress = Math.pow(rawProgress, 8);
+
+                // Value from 4.2 to 4.2 trillion (4,200,000,000,000)
+                const startVal = 4.2;
+                const endVal = 4200000000000;
+                const val = startVal + (endVal - startVal) * skewedProgress;
+
+                // Format the value
+                let displayText;
+                if (val >= 1e12) {
+                    const trillions = val / 1e12;
+                    displayText = trillions.toFixed(1).replace('.', ',') + ' Billionen Mark';
+                } else if (val >= 1e9) {
+                    const billions = val / 1e9;
+                    displayText = billions.toFixed(1).replace('.', ',') + ' Milliarden Mark';
+                } else if (val >= 1e6) {
+                    const millions = val / 1e6;
+                    displayText = millions.toFixed(1).replace('.', ',') + ' Millionen Mark';
+                } else if (val >= 1000) {
+                    displayText = Math.round(val).toLocaleString('de-DE') + ' Mark';
+                } else {
+                    displayText = val.toFixed(2).replace('.', ',') + ' Mark';
+                }
+                this.inflationValue.textContent = displayText;
+
+                // When we're very close to the peak (>95% progress), add bloody class
+                if (rawProgress > 0.92 && !this.inflationCounter.classList.contains('bloody-active')) {
+                    this.inflationCounter.classList.add('bloody-active');
+                } else if (rawProgress <= 0.92 && this.inflationCounter.classList.contains('bloody-active')) {
+                    this.inflationCounter.classList.remove('bloody-active');
+                }
+
                 this.inflationAnimationId = requestAnimationFrame(() => this.animateInflation());
             }
 
@@ -1732,9 +2130,18 @@
                     else this.dateStamp1.classList.remove('visible');
                     if (elapsed >= t.movement1InflationIn && elapsed < t.movement1InflationOut) { this.inflationCounter
                             .classList.add('visible'); if (!this.inflationAnimationId) this.animateInflation(); } else { this
-                            .inflationCounter.classList.remove('visible'); if (this.inflationAnimationId) {
+                            .inflationCounter.classList.remove('visible');
+                        this.inflationCounter.classList.remove('bloody-active'); if (this.inflationAnimationId) {
                             cancelAnimationFrame(this.inflationAnimationId);
                             this.inflationAnimationId = null; } }
+                    if (elapsed >= t.movement1CommentaryIn && elapsed < t.movement1CommentaryOut && !this
+                        .commentaryTypingTimer && this.commentaryText.textContent === '') {
+                        this.typeCommentary(1);
+                    } else if ((elapsed < t.movement1CommentaryIn || elapsed >= t.movement1CommentaryOut) && this
+                        .commentaryText.textContent !== '' && this.currentMovement === 1) {
+                        this.clearCommentaryTyping();
+                        this.historicalCommentary.classList.remove('visible');
+                    }
                     if (elapsed >= t.movement1End - 2 && elapsed < t.movement1End) { this.videoLayers[1].classList
                             .add('fading');
                         this.fadeVideoAudio(1, 0, 2); }
@@ -1751,6 +2158,14 @@
                     if (elapsed >= t.movement2DateStampIn && elapsed < t.movement2DateStampOut) this.dateStamp2
                         .classList.add('visible');
                     else this.dateStamp2.classList.remove('visible');
+                    if (elapsed >= t.movement2CommentaryIn && elapsed < t.movement2CommentaryOut && !this
+                        .commentaryTypingTimer && this.commentaryText.textContent === '') {
+                        this.typeCommentary(2);
+                    } else if ((elapsed < t.movement2CommentaryIn || elapsed >= t.movement2CommentaryOut) && this
+                        .commentaryText.textContent !== '' && this.currentMovement === 2) {
+                        this.clearCommentaryTyping();
+                        this.historicalCommentary.classList.remove('visible');
+                    }
                     if (elapsed >= t.movement2End - 2 && elapsed < t.movement2End) { this.videoLayers[2].classList
                             .add('fading');
                         this.fadeVideoAudio(2, 0, 2); }
@@ -1766,6 +2181,14 @@
                     if (elapsed >= t.movement3DateStampIn && elapsed < t.movement3DateStampOut) this.dateStamp3
                         .classList.add('visible');
                     else this.dateStamp3.classList.remove('visible');
+                    if (elapsed >= t.movement3CommentaryIn && elapsed < t.movement3CommentaryOut && !this
+                        .commentaryTypingTimer && this.commentaryText.textContent === '') {
+                        this.typeCommentary(3);
+                    } else if ((elapsed < t.movement3CommentaryIn || elapsed >= t.movement3CommentaryOut) && this
+                        .commentaryText.textContent !== '' && this.currentMovement === 3) {
+                        this.clearCommentaryTyping();
+                        this.historicalCommentary.classList.remove('visible');
+                    }
                     if (elapsed >= t.movement3End - 2 && elapsed < t.movement3End) { this.videoLayers[3].classList
                             .add('fading');
                         this.fadeVideoAudio(3, 0, 2); }
@@ -1794,6 +2217,14 @@
                     if (elapsed >= t.newsTickerIn && elapsed < t.movement4End) this.newsTicker.classList.add(
                     'visible');
                     else this.newsTicker.classList.remove('visible');
+                    if (elapsed >= t.movement4CommentaryIn && elapsed < t.movement4CommentaryOut && !this
+                        .commentaryTypingTimer && this.commentaryText.textContent === '') {
+                        this.typeCommentary(4);
+                    } else if ((elapsed < t.movement4CommentaryIn || elapsed >= t.movement4CommentaryOut) && this
+                        .commentaryText.textContent !== '' && this.currentMovement === 4) {
+                        this.clearCommentaryTyping();
+                        this.historicalCommentary.classList.remove('visible');
+                    }
                     if (elapsed >= t.movement4End - 2 && elapsed < t.movement4End) { this.videoLayers[4].classList
                             .add('fading');
                         this.fadeVideoAudio(4, 0, 2); }
@@ -1816,6 +2247,7 @@
                 if (num !== 1) { this.overlayIronCross.classList.remove('visible');
                     this.overlayStarvingChild.classList.remove('visible');
                     this.inflationCounter.classList.remove('visible');
+                    this.inflationCounter.classList.remove('bloody-active');
                     this.dateStamp1.classList.remove('visible'); if (this.inflationAnimationId) {
                         cancelAnimationFrame(this.inflationAnimationId);
                         this.inflationAnimationId = null; } }
@@ -1825,6 +2257,8 @@
                 if (num !== 4) { this.overlayElectionPoster.classList.remove('visible');
                     this.dateStamp4.classList.remove('visible'); }
                 [this.quoteM1, this.quoteM2, this.quoteM3, this.quoteM4].forEach(q => q.classList.remove('visible'));
+                this.clearCommentaryTyping();
+                this.historicalCommentary.classList.remove('visible');
                 if (this.videoLayers[num]) { this.videoLayers[num].classList.add('chromatic');
                     setTimeout(() => this.videoLayers[num].classList.remove('chromatic'), 350); }
                 this.triggerLightLeak();
@@ -1836,6 +2270,12 @@
                 if (num === 4) this.scheduleFragment4Flickers();
                 this.handleMusicTransition(num);
                 this.currentMovement = num;
+                // Boost procedural canvas if video had errors
+                if (this.videoErrorCount[num] >= 1) {
+                    this.proceduralCanvas.style.opacity = '0.7';
+                } else {
+                    this.proceduralCanvas.style.opacity = '0.35';
+                }
                 console.log(`Entered Movement ${num} at ${this.getElapsed().toFixed(1)}s`);
             }
 
@@ -1973,6 +2413,8 @@
                 this.endStateReached = true;
                 this.clearFragmentFlickers();
                 this.hideAllFragments();
+                this.clearCommentaryTyping();
+                this.historicalCommentary.classList.remove('visible');
                 this.lightLeakTimers.forEach(t => clearTimeout(t));
                 this.lightLeakTimers = [];
                 if (this.inflationAnimationId) { cancelAnimationFrame(this.inflationAnimationId);
@@ -1983,6 +2425,7 @@
                 this.splitScreenOverlay.classList.remove('active');
                 this.newsTicker.classList.remove('visible');
                 this.inflationCounter.classList.remove('visible');
+                this.inflationCounter.classList.remove('bloody-active');
                 this.letterboxTop.classList.remove('cinematic');
                 this.letterboxBottom.classList.remove('cinematic');
                 this.letterboxTop.classList.add('full-black');
@@ -2002,6 +2445,7 @@
                         g.gain.setValueAtTime(g.gain.value, now);
                         g.gain.linearRampToValueAtTime(0, now + 0.3); } });
                 this.endState.classList.add('visible');
+                this.proceduralCanvas.style.opacity = '0.25';
                 setTimeout(() => { this.endSwastikaGhost.style.opacity = '0.025'; }, 1500);
                 setTimeout(() => { this.endSwastikaGhost.style.opacity = '0'; }, 6000);
                 setTimeout(() => { this.letterboxTop.classList.remove('full-black');
@@ -2016,10 +2460,12 @@
             }
             destroy() {
                 this.clearFragmentFlickers();
+                this.clearCommentaryTyping();
                 this.lightLeakTimers.forEach(t => clearTimeout(t));
                 if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
                 if (this.grainAnimId) cancelAnimationFrame(this.grainAnimId);
                 if (this.dustAnimId) cancelAnimationFrame(this.dustAnimId);
+                if (this.proceduralAnimId) cancelAnimationFrame(this.proceduralAnimId);
                 if (this.inflationAnimationId) cancelAnimationFrame(this.inflationAnimationId);
                 if (this.audioContext) this.audioContext.close().catch(() => {});
                 document.removeEventListener('keydown', this.handleKeyDown);
@@ -2030,11 +2476,11 @@
 
         const symphony = new Symphony();
         window.__symphony = symphony;
-        console.log('%c🎻 Symphony of Ruin %c— Verfeinerte Edition —',
+        console.log('%c🎻 Symphony of Ruin %c— Vollendete Edition —',
             'font-family:Cinzel,serif;font-size:1.3em;color:#cc0000;', 'color:#888;');
         console.log('%c1918–1928 · The Wound · Birth · Putsch · Lean Years',
             'font-family:Inter,sans-serif;font-size:0.8em;color:#666;');
-        console.log('%cÄnderungen: Keine Shakes · Dezente Staubpartikel · Verwischte Light Leaks · Klare gebrochene Swastika-Fragmente (clip-path)',
+        console.log('%c✨ Neu: Beschleunigte Inflation · Blutige Wörter · Historischer Kommentar · Prozeduraler Video-Fallback',
             'font-family:Inter,sans-serif;font-size:0.65em;color:#555;');
         console.log('%c── Asset-Verzeichnis ──', 'color:#444;');
         console.log('📁 assets/videos/ — movement1-wound.mp4, movement2-birth.mp4, movement3-putsch.mp4, movement4-lean-years.mp4');
